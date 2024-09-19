@@ -1,5 +1,5 @@
 global _main
-section __TEXT,__text
+section .text
 _main:
-    mov rax, 42
+    mov rax, 69
     ret
