@@ -1,6 +1,6 @@
 # Compiler settings
 CC = gcc
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -Iinclude  # Added include directory to compiler flags
 
 # Assembly settings
 ASM = nasm
@@ -14,12 +14,20 @@ OBJ_FILE = program.o
 EXEC = program
 TEST_INPUT = 69
 
+# Source files
+SRCS = src/main.c src/tokenize.c src/fileutils.c
+OBJS = $(SRCS:.c=.o)
+
 # Default target
 all: $(COMPILER)
 
-# Compile the compiler
-$(COMPILER): main.c
-	$(CC) $(CFLAGS) $< -o $@
+# Compile the compiler - updated to use all source files
+$(COMPILER): $(OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
+
+# Pattern rule for object files
+src/%.o: src/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # Run the compiler on test input
 compile_cf: $(COMPILER)
@@ -35,7 +43,7 @@ $(EXEC): $(OBJ_FILE)
 
 # Clean build files
 clean:
-	rm -f $(COMPILER) $(OBJ_FILE) $(EXEC) $(ASM_FILE)
+	rm -f $(COMPILER) $(OBJ_FILE) $(EXEC) $(ASM_FILE) $(OBJS)
 
 # Full pipeline: compile CF file and run resulting executable
 full: compile_cf $(EXEC)
