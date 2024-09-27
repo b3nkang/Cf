@@ -1,0 +1,6 @@
+*.o
+program
+main
+*.s
+*.asm
+.vscode
