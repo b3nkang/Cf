@@ -18,3 +18,10 @@ typedef struct {
     char* inputSource;
     size_t position;
 } Tokenizer;
+
+Tokenizer* createTokenizer(char* source);
+Token* getNextToken(Tokenizer* tokenizer);
+void freeTokenizer(Tokenizer* tokenizer);
+void freeToken(Token* token);
+Token* readNum(Tokenizer* tokenizer);
+Token* readIdentifier(Tokenizer* tokenizer);
