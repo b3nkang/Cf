@@ -4,3 +4,4 @@ main
 *.s
 *.asm
 .vscode
+cf
