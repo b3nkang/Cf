@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "tokenize.h"
+#include "../include/tokenize.h"
 
 Tokenizer* createTokenizer(char* source) {
     Tokenizer* tokenizer = (Tokenizer*)malloc(sizeof(Tokenizer));
@@ -13,7 +13,7 @@ Tokenizer* createTokenizer(char* source) {
 
 Token* getNextToken(Tokenizer* tokenizer) {
     for (;;) {
-        char* currChar = tokenizer->inputSource[tokenizer->position];
+        char currChar = tokenizer->inputSource[tokenizer->position];
         if (isspace(currChar)) {
             tokenizer->position++;
             continue;
