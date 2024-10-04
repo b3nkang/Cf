@@ -1,6 +1,6 @@
 # Compiler settings
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude  # Added include directory to compiler flags
+CFLAGS = -Wall -Wextra -Iinclude
 
 # Assembly settings
 ASM = nasm
@@ -9,19 +9,19 @@ LDFLAGS = -lSystem -syslibroot $(shell xcrun -sdk macosx --show-sdk-path) -e _ma
 
 # Files
 COMPILER = cf
-ASM_FILE = test.asm
+ASM_FILE = test2.asm
 OBJ_FILE = program.o
 EXEC = program
-TEST_INPUT = 69
+TEST_INPUT = 1728
 
 # Source files
-SRCS = src/main.c src/tokenize.c src/fileutils.c
+SRCS = src/main.c src/tokenize.c src/fileUtils.c
 OBJS = $(SRCS:.c=.o)
 
 # Default target
 all: $(COMPILER)
 
-# Compile the compiler - updated to use all source files
+# Compile the compiler
 $(COMPILER): $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 
