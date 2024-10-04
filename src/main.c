@@ -1,25 +1,47 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "../include/fileUtils.h"
+#include "../include/tokenize.h"
 
 void compileCf (const char* sourceFile, const char* outputFile, int num) {
-    FILE* input = fopen(sourceFile, "r");
-    if (!input) {
-        fprintf(stderr, "Could not open source file %s\n", sourceFile);
-        exit(1);
-    }    
+    char* sourceText = readInputFile(sourceFile);
+    Tokenizer* tzr = createTokenizer(sourceText);
     FILE* output = fopen(outputFile, "w");
     if (!output) {
         fprintf(stderr, "Could not open output file %s\n", outputFile);
+        free(sourceText);
+        freeTokenizer(tzr);
         exit(1);
     }
-    fprintf(output, "global _main\n");
-    fprintf(output, "section .text\n");
-    fprintf(output, "_main:\n");
-    fprintf(output, "    mov rax, %d\n", num);
-    fprintf(output, "    ret\n");
-    fclose(input);
+    Token* currTok;
+    for (;;) {
+        currTok = getNextToken(tzr);
+        switch (currTok->type) {
+            case RET_TOK: {
+                Token* valueToken = getNextToken(tzr);
+                if (valueToken->type == NUM_TOK) {
+                    fprintf(output, "global _main\n");
+                    fprintf(output, "section .text\n");
+                    fprintf(output, "_main:\n");
+                    fprintf(output, "    mov rax, %s\n", valueToken->value);
+                    fprintf(output, "    ret\n");
+                }
+                freeToken(valueToken);
+                break;
+            }
+            case EOF_TOK:
+                freeToken(currTok);
+                goto cleanup;
+            default:
+                freeToken(currTok);
+                goto cleanup;
+        }
+    }
+cleanup:
     fclose(output);
+    free(sourceText);
+    freeTokenizer(tzr);
 }
 
 int main(int argc, char** argv) {
@@ -28,6 +50,6 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
     printf("%s\n",argv[1]);
-    compileCf("test.c","test.asm", atoi(argv[1]));
+    compileCf("test.cf","test2.asm", atoi(argv[1]));
     return EXIT_SUCCESS;
 }
