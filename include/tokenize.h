@@ -19,9 +19,18 @@ typedef struct {
     size_t position;
 } Tokenizer;
 
+typedef struct {
+    Token** tokens; // array of toks
+    size_t count;
+    size_t capacity;
+} TokenArray;
+
 Tokenizer* createTokenizer(char* source);
 Token* getNextToken(Tokenizer* tokenizer);
 void freeTokenizer(Tokenizer* tokenizer);
 void freeToken(Token* token);
 Token* readNum(Tokenizer* tokenizer);
 Token* readIdentifier(Tokenizer* tokenizer);
+TokenArray* createTokenArray();
+void addToken(TokenArray* arr, Token* newToken);
+void freeTokenArray(TokenArray* arr);
