@@ -89,3 +89,34 @@ void freeToken(Token* token) {
     }
     free(token);
 }
+
+TokenArray* createTokenArray() {
+    TokenArray* tokArr = malloc(sizeof(TokenArray));
+    tokArr->capacity = 16;
+    tokArr->count = 0;
+    tokArr->tokens = malloc(sizeof(Token*) * tokArr->capacity);
+    return tokArr;
+}
+
+void addToken(TokenArray* tokArr, Token* tok) {
+    if (tokArr->count >= tokArr->capacity) {
+        size_t newCapacity = tokArr->capacity * 2;
+        Token** newTokens = malloc(sizeof(Token*) * newCapacity);
+        for (size_t i = 0; i < tokArr->count; i++) {
+            newTokens[i] = tokArr->tokens[i];
+        }
+        free(tokArr->tokens);
+        tokArr->tokens = newTokens;
+        tokArr->capacity = newCapacity;
+    }
+    tokArr->tokens[tokArr->count] = tok;
+    tokArr->count++;
+}
+
+void freeTokenArray(TokenArray* arr) {
+    for (size_t i = 0; i < arr->count; i++) {
+        freeToken(arr->tokens[i]);
+    }
+    free(arr->tokens);
+    free(arr);
+}
