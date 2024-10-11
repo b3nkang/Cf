@@ -50,6 +50,27 @@ void compileCf (const char* sourceFile, const char* outputFile, int num) {
         }
     }
 cleanup:
+    printf("\n----------------\nToken Array Contents:\n");
+    for (size_t i = 0; i < tokArr->count; i++) {
+        printf("%zu: Type = ", i);
+        switch (tokArr->tokens[i]->type) {
+            case NUM_TOK:
+                printf("NUMBER, Value = %s\n", tokArr->tokens[i]->value);
+                break;
+            case SEMI_TOK:
+                printf("SEMICOLON\n");
+                break;
+            case EOF_TOK:
+                printf("EOF\n");
+                break;
+            case RET_TOK:
+                printf("RETURN, Value = %s\n", tokArr->tokens[i]->value);
+                break;
+            default:
+                printf("UNKNOWN\n");
+        }
+    }
+    printf("Total tokens: %zu\n----------------\n\n", tokArr->count);
     fclose(output);
     free(sourceText);
     freeTokenArray(tokArr);
