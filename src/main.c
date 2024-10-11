@@ -15,32 +15,44 @@ void compileCf (const char* sourceFile, const char* outputFile, int num) {
         exit(1);
     }
     Token* currTok;
+    TokenArray* tokArr = createTokenArray();
     for (;;) {
         currTok = getNextToken(tzr);
         switch (currTok->type) {
             case RET_TOK: {
-                Token* valueToken = getNextToken(tzr);
-                if (valueToken->type == NUM_TOK) {
+                addToken(tokArr,currTok);
+                Token* valueTok = getNextToken(tzr);
+                if (valueTok->type == NUM_TOK) {
+                    addToken(tokArr,valueTok);
                     fprintf(output, "global _main\n");
                     fprintf(output, "section .text\n");
                     fprintf(output, "_main:\n");
-                    fprintf(output, "    mov rax, %s\n", valueToken->value);
+                    fprintf(output, "    mov rax, %s\n", valueTok->value);
                     fprintf(output, "    ret\n");
                 }
-                freeToken(valueToken);
-                break;
+                // freeToken(valueTok);
+                continue;
             }
             case EOF_TOK:
-                freeToken(currTok);
+                addToken(tokArr,currTok);
+                // freeToken(currTok);
                 goto cleanup;
+            case SEMI_TOK:
+                addToken(tokArr,currTok);
+                continue;
+            case NUM_TOK:
+                addToken(tokArr,currTok);
+                continue;
             default:
-                freeToken(currTok);
+                printf("error unrecognized token");
+                // freeToken(currTok);
                 goto cleanup;
         }
     }
 cleanup:
     fclose(output);
     free(sourceText);
+    freeTokenArray(tokArr);
     freeTokenizer(tzr);
 }
 
