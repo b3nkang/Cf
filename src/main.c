@@ -4,7 +4,7 @@
 #include "../include/fileUtils.h"
 #include "../include/tokenize.h"
 
-void compileCf (const char* sourceFile, const char* outputFile, int num) {
+void compileCf (const char* sourceFile, const char* outputFile) {
     char* sourceText = readInputFile(sourceFile);
     Tokenizer* tzr = createTokenizer(sourceText);
     FILE* output = fopen(outputFile, "w");
@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
         fprintf(stderr,"Wrong format, correct is: cf <inputFile.cf>");
         return EXIT_FAILURE;
     }
-    printf("%s\n",argv[1]);
-    compileCf("test.cf","test2.asm", atoi(argv[1]));
+    printf("Ingesting input file: %s\n",argv[1]);
+    compileCf(argv[1],"test2.asm");
     return EXIT_SUCCESS;
 }

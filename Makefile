@@ -12,7 +12,7 @@ COMPILER = cf
 ASM_FILE = test2.asm
 OBJ_FILE = program.o
 EXEC = program
-TEST_INPUT = 1728
+TEST_FILE_INPUT = test.cf
 
 # Source files
 SRCS = src/main.c src/tokenize.c src/fileUtils.c
@@ -31,7 +31,7 @@ src/%.o: src/%.c
 
 # Run the compiler on test input
 compile_cf: $(COMPILER)
-	./$(COMPILER) $(TEST_INPUT)
+	./$(COMPILER) $(TEST_FILE_INPUT)
 
 # Compile assembly to object file
 $(OBJ_FILE): $(ASM_FILE)
