@@ -15,7 +15,7 @@ EXEC = program
 TEST_FILE_INPUT = test.cf
 
 # Source files
-SRCS = src/main.c src/tokenize.c src/fileUtils.c
+SRCS = src/main.c src/tokenizer.c src/fileUtils.c
 OBJS = $(SRCS:.c=.o)
 
 # Default target
