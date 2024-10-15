@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "../include/fileUtils.h"
-#include "../include/tokenize.h"
+#include "../include/tokenizer.h"
 
 void compileCf (const char* sourceFile, const char* outputFile) {
     char* sourceText = readInputFile(sourceFile);

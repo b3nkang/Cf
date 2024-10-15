@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "../include/tokenize.h"
+#include "../include/tokenizer.h"
 
 Tokenizer* createTokenizer(char* source) {
     Tokenizer* tokenizer = (Tokenizer*)malloc(sizeof(Tokenizer));
