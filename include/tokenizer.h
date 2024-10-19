@@ -12,11 +12,15 @@ typedef enum {
 typedef struct {
     TokenType type;
     char* value;
+    int ln;
+    int col;
 } Token;
 
 typedef struct {
     char* inputSource;
     size_t position;
+    int currLn;
+    int currCol;
 } Tokenizer;
 
 typedef struct {
