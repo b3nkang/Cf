@@ -8,21 +8,30 @@ Tokenizer* createTokenizer(char* source) {
     Tokenizer* tokenizer = (Tokenizer*)malloc(sizeof(Tokenizer));
     tokenizer->inputSource = source;
     tokenizer->position = 0;
+    tokenizer->currLn = 1;
+    tokenizer->currCol = 1;
     return tokenizer;
 }
 
 Token* getNextToken(Tokenizer* tokenizer) {
     for (;;) {
         char currChar = tokenizer->inputSource[tokenizer->position];
-        if (isspace(currChar)) {
-            tokenizer->position++;
-            continue;
-        }
         if (currChar == '\0') {
             Token* retTok = (Token*)malloc(sizeof(Token));
             retTok->type = EOF_TOK;
             retTok->value = NULL;
             return retTok;
+        }
+        if (isspace(currChar)) {
+            tokenizer->position++;
+            tokenizer->currCol++;
+            continue;
+        }
+        if (currChar == '\n') {
+            tokenizer->currLn++;
+            tokenizer->currCol = 1;
+            tokenizer->position++;
+            continue;
         }
         if (isdigit(currChar)) {
             return readNum(tokenizer);
@@ -31,6 +40,8 @@ Token* getNextToken(Tokenizer* tokenizer) {
             Token* retTok = (Token*)malloc(sizeof(Token));
             retTok->type = SEMI_TOK;
             retTok->value = NULL;
+            retTok->ln = tokenizer->currLn;
+            retTok->col = tokenizer->currCol;
             tokenizer->position++;
             return retTok;
         }
@@ -52,6 +63,8 @@ Token* readNum(Tokenizer* tokenizer) {
     retTok->type = NUM_TOK;
     retTok->value = malloc(numLen+1);
     strncpy(retTok->value,&tokenizer->inputSource[numStart],numLen);
+    retTok->ln = tokenizer->currLn;
+    retTok->col = tokenizer->currCol;
     retTok->value[numLen] = '\0';
     return retTok;
 }
@@ -70,6 +83,8 @@ Token* readIdentifier(Tokenizer* tokenizer) {
     if (strncmp(&tokenizer->inputSource[wordStart],"retourner",wordLen) == 0 && wordLen == 9) {
         retTok->type = RET_TOK;
         retTok->value = wordBuf;
+        retTok->ln = tokenizer->currLn;
+        retTok->col = tokenizer->currCol;
         return retTok;
     }
     // TODO: implement tokenizing for strings
