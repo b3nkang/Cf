@@ -1,3 +1,5 @@
+#pragma once
+
 #include "tokenizer.h"
 
 typedef enum {
@@ -35,3 +37,4 @@ typedef struct {
 
 AstNode* parse(TokenArray* tokens, const char* filename);
 void freeAstNode(AstNode* node);
+void printAst(AstNode* node, int indent);
