@@ -2,6 +2,12 @@
 #include <stdlib.h>
 #include "../include/parser.h"
 
+AstNode* parse(TokenArray* tokens, const char* fileName);
+static AstNode* parseProgram(Parser* parser);
+static AstNode* parseStatement(Parser* parser);
+static AstNode* parseReturnStatement(Parser* parser);
+static AstNode* parseExpression(Parser* parser);
+
 static Token* peek(Parser* parser) {
     if (parser->currPos >= parser->tokens->count) {
         return NULL;
@@ -54,6 +60,7 @@ static AstNode* parseStatement(Parser* parser) {
         return parseReturnStatement(parser);
     }
     parserError(parser, "Expected statement");
+    return NULL;
 }
 
 static AstNode* parseReturnStatement(Parser* parser) {
@@ -84,4 +91,43 @@ static AstNode* parseExpression(Parser* parser) {
     }
     parserError(parser, "Expected expression");
     return NULL;
+}
+
+void freeAstNode(AstNode* node) {
+    if (node == NULL) return;
+    switch (node->type) {
+        case AST_PROG:
+            for (size_t i = 0; i < node->as.program.count; i++) {
+                freeAstNode(node->as.program.stmts[i]);
+            }
+            free(node->as.program.stmts);
+            break;
+        case AST_RET:
+            freeAstNode(node->as.retStmt.val);
+            break;
+        case AST_NUM:
+            break;
+    }    
+    free(node);
+}
+
+void printAst(AstNode* node, int indent) {
+    for (int i = 0; i < indent; i++) {
+        printf("  ");
+    }
+    switch (node->type) {
+        case AST_PROG:
+            printf("Program (statements: %zu)\n", node->as.program.count);
+            for (size_t i = 0; i < node->as.program.count; i++) {
+                printAst(node->as.program.stmts[i], indent + 1);
+            }
+            break;  
+        case AST_RET:
+            printf("Return Statement\n");
+            printAst(node->as.retStmt.val, indent + 1);
+            break; 
+        case AST_NUM:
+            printf("Number: %d\n", node->as.num.val);
+            break;
+    }
 }
