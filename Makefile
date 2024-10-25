@@ -12,21 +12,26 @@ COMPILER = cf
 ASM_FILE = test2.asm
 OBJ_FILE = program.o
 EXEC = program
-TEST_FILE_INPUT = test.cf
+TEST_FILE_INPUT = test2.cf
 
 # Source files
-SRCS = src/main.c src/tokenizer.c src/fileUtils.c
+SRCS = src/main.c src/tokenizer.c src/fileUtils.c src/parser.c
+
+# Object files are generated from source files
 OBJS = $(SRCS:.c=.o)
+
+# Header files
+HEADERS = include/fileUtils.h include/tokenize.h include/parser.h
 
 # Default target
 all: $(COMPILER)
 
-# Compile the compiler
+# Compile the compiler - Now depends on headers too
 $(COMPILER): $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 
-# Pattern rule for object files
-src/%.o: src/%.c
+# Pattern rule for object files - Added header dependency
+src/%.o: src/%.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Run the compiler on test input
@@ -44,6 +49,8 @@ $(EXEC): $(OBJ_FILE)
 # Clean build files
 clean:
 	rm -f $(COMPILER) $(OBJ_FILE) $(EXEC) $(ASM_FILE) $(OBJS)
+	rm -f src/*.o
+	rm -f $(COMPILER)
 
 # Full pipeline: compile CF file and run resulting executable
 full: compile_cf $(EXEC)
