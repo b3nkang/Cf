@@ -4,6 +4,7 @@
 #include "../include/fileUtils.h"
 #include "../include/tokenizer.h"
 #include "../include/parser.h"
+#include "../include/codeGen.h"
 
 void compileCf (const char* sourceFile, const char* outputFile) {
     char* sourceText = readInputFile(sourceFile);
@@ -72,21 +73,24 @@ void compileCf (const char* sourceFile, const char* outputFile) {
         freeTokenizer(tzr);
         exit(1);
     }
-    fprintf(output, "global _main\n");
-    fprintf(output, "section .text\n");
-    fprintf(output, "_main:\n");
+    // fprintf(output, "global _main\n");
+    // fprintf(output, "section .text\n");
+    // fprintf(output, "_main:\n");
 
-    // TODO: place with proper traversl of ast
-    if (programAst->type == AST_PROG && 
-        programAst->as.program.count > 0 &&
-        programAst->as.program.stmts[0]->type == AST_RET) {
+    // // TODO: place with proper traversl of ast
+    // if (programAst->type == AST_PROG && 
+    //     programAst->as.program.count > 0 &&
+    //     programAst->as.program.stmts[0]->type == AST_RET) {
         
-        AstNode* returnNode = programAst->as.program.stmts[0];
-        if (returnNode->as.retStmt.val->type == AST_NUM) {
-            fprintf(output, "    mov rax, %d\n", returnNode->as.retStmt.val->as.num.val);
-        }
-    }
-    fprintf(output, "    ret\n");
+    //     AstNode* returnNode = programAst->as.program.stmts[0];
+    //     if (returnNode->as.retStmt.val->type == AST_NUM) {
+    //         fprintf(output, "    mov rax, %d\n", returnNode->as.retStmt.val->as.num.val);
+    //     }
+    // }
+    // fprintf(output, "    ret\n");
+    CodeGenContext* context = createCodeGenContext(output);
+    generateCode(context, programAst);
+    freeCodeGenContext(context);
 
 // cleanup:
     printf("----------------\nToken Array Contents:\n");
