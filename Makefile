@@ -15,13 +15,13 @@ EXEC = program
 TEST_FILE_INPUT = test2.cf
 
 # Source files
-SRCS = src/main.c src/tokenizer.c src/fileUtils.c src/parser.c
+SRCS = src/main.c src/tokenizer.c src/fileUtils.c src/parser.c src/codeGen.c
 
 # Object files are generated from source files
 OBJS = $(SRCS:.c=.o)
 
 # Header files
-HEADERS = include/fileUtils.h include/tokenize.h include/parser.h
+HEADERS = include/fileUtils.h include/tokenize.h include/parser.h include/codeGen.h
 
 # Default target
 all: $(COMPILER)
