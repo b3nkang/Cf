@@ -33,25 +33,86 @@ Token* getNextToken(Tokenizer* tokenizer) {
             tokenizer->position++;
             continue;
         }
+        Token* retTok = malloc(sizeof(Token));
+        retTok->ln = tokenizer->currLn;
+        retTok->col = tokenizer->currCol;
+        
+        switch (currChar) {
+            case '+':
+                retTok->type = PLUS_TOK;
+                retTok->value = NULL;
+                tokenizer->position++;
+                tokenizer->currCol++;
+                return retTok;
+            case '-':
+                retTok->type = MINUS_TOK;
+                retTok->value = NULL;
+                tokenizer->position++;
+                tokenizer->currCol++;
+                return retTok;
+            case '*':
+                retTok->type = MULT_TOK;
+                retTok->value = NULL;
+                tokenizer->position++;
+                tokenizer->currCol++;
+                return retTok;
+            case '/':
+                retTok->type = DIV_TOK;
+                retTok->value = NULL;
+                tokenizer->position++;
+                tokenizer->currCol++;
+                return retTok;
+            case '(':
+                retTok->type = LPAREN_TOK;
+                retTok->value = NULL;
+                tokenizer->position++;
+                tokenizer->currCol++;
+                return retTok;
+            case ')':
+                retTok->type = RPAREN_TOK;
+                retTok->value = NULL;
+                tokenizer->position++;
+                tokenizer->currCol++;
+                return retTok;
+            case ';':
+                retTok->type = SEMI_TOK;
+                retTok->value = NULL;
+                tokenizer->position++;
+                tokenizer->currCol++;
+                return retTok;
+        }
         if (isdigit(currChar)) {
+            free(retTok);
             return readNum(tokenizer);
         }
-        if (currChar == ';') {
-            Token* retTok = (Token*)malloc(sizeof(Token));
-            retTok->type = SEMI_TOK;
-            retTok->value = NULL;
-            retTok->ln = tokenizer->currLn;
-            retTok->col = tokenizer->currCol;
-            tokenizer->position++;
-            return retTok;
-        }
         if (isalpha(currChar)) {
+            free(retTok);
             return readIdentifier(tokenizer);
         }
-        fprintf(stderr, "Error: Unexpected character '%c' at position %zu\n", currChar, tokenizer->position);
+        fprintf(stderr, "Error: Unexpected character '%c' at line %d, column %d\n", currChar, tokenizer->currLn, tokenizer->currCol);
         exit(1);
     }
 }
+
+//         if (isdigit(currChar)) {
+//             return readNum(tokenizer);
+//         }
+//         if (currChar == ';') {
+//             Token* retTok = (Token*)malloc(sizeof(Token));
+//             retTok->type = SEMI_TOK;
+//             retTok->value = NULL;
+//             retTok->ln = tokenizer->currLn;
+//             retTok->col = tokenizer->currCol;
+//             tokenizer->position++;
+//             return retTok;
+//         }
+//         if (isalpha(currChar)) {
+//             return readIdentifier(tokenizer);
+//         }
+//         fprintf(stderr, "Error: Unexpected character '%c' at position %zu\n", currChar, tokenizer->position);
+//         exit(1);
+//     }
+// }
 
 Token* readNum(Tokenizer* tokenizer) {
     size_t numStart = tokenizer->position;
