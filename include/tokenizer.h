@@ -8,7 +8,13 @@ typedef enum {
     NUM_TOK,
     SEMI_TOK,
     EOF_TOK,
-    RET_TOK
+    RET_TOK,
+    PLUS_TOK,
+    MINUS_TOK,
+    MULT_TOK,
+    DIV_TOK,
+    LPAREN_TOK,
+    RPAREN_TOK
 } TokenType;
 
 typedef struct {
