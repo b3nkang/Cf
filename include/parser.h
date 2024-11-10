@@ -5,8 +5,16 @@
 typedef enum {
     AST_PROG,
     AST_NUM,
-    AST_RET
+    AST_RET,
+    AST_BINOP
 } AstNodeType;
+
+typedef enum {
+    OP_ADD,
+    OP_SUB,
+    OP_MULT,
+    OP_DIV
+} BinaryOpType;
 
 typedef struct AstNode {
     AstNodeType type;
@@ -25,6 +33,12 @@ typedef struct AstNode {
         struct {
             int val;
         } num;
+
+        struct {
+            BinaryOpType op;
+            struct AstNode* left;
+            struct AstNode* right;
+        } binop;
 
     } as;
 } AstNode;
