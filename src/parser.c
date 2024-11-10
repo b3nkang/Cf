@@ -7,6 +7,9 @@ static AstNode* parseProgram(Parser* parser);
 static AstNode* parseStatement(Parser* parser);
 static AstNode* parseReturnStatement(Parser* parser);
 static AstNode* parseExpression(Parser* parser);
+static AstNode* parseTerm(Parser* parser);
+static AstNode* parseFactor(Parser* parser);
+static AstNode* parsePrimary(Parser* parser);
 
 static Token* peek(Parser* parser) {
     if (parser->currPos >= parser->tokens->count) {
@@ -79,6 +82,57 @@ static AstNode* parseReturnStatement(Parser* parser) {
 }
 
 static AstNode* parseExpression(Parser* parser) {
+    AstNode* left = parseTerm(parser);
+    while (match(parser, PLUS_TOK) || match(parser, MINUS_TOK)) {
+        Token* op = advance(parser);
+        AstNode* right = parseTerm(parser);
+        AstNode* binop = malloc(sizeof(AstNode));
+        binop->type = AST_BINOP;
+        binop->ln = op->ln;
+        binop->col = op->col;
+        binop->as.binop.left = left;
+        binop->as.binop.right = right;
+        binop->as.binop.op = (op->type == PLUS_TOK) ? OP_ADD : OP_SUB;
+        left = binop;
+    }
+    return left;
+}
+
+static AstNode* parseTerm(Parser* parser) {
+    AstNode* left = parseFactor(parser);
+    while (match(parser, MULT_TOK) || match(parser, DIV_TOK)) {
+        Token* op = advance(parser);
+        AstNode* right = parseFactor(parser);
+        
+        AstNode* binop = malloc(sizeof(AstNode));
+        binop->type = AST_BINOP;
+        binop->ln = op->ln;
+        binop->col = op->col;
+        binop->as.binop.left = left;
+        binop->as.binop.right = right;
+        binop->as.binop.op = (op->type == MULT_TOK) ? OP_MULT : OP_DIV;
+        
+        left = binop;
+    }
+    return left;
+}
+
+
+static AstNode* parseFactor(Parser* parser) {
+    if (match(parser, LPAREN_TOK)) {
+        advance(parser);  // consume (
+        AstNode* expr = parseExpression(parser);
+        
+        if (!match(parser, RPAREN_TOK)) {
+            parserError(parser, "Expected ')'");
+        }
+        advance(parser);  // consume )
+        return expr;
+    }
+    return parsePrimary(parser);
+}
+
+static AstNode* parsePrimary(Parser* parser) {
     Token* current = peek(parser);
     if (current->type == NUM_TOK) {
         Token* numToken = advance(parser);
@@ -105,9 +159,13 @@ void freeAstNode(AstNode* node) {
         case AST_RET:
             freeAstNode(node->as.retStmt.val);
             break;
+        case AST_BINOP:
+            freeAstNode(node->as.binop.left);
+            freeAstNode(node->as.binop.right);
+            break;
         case AST_NUM:
             break;
-    }    
+    }
     free(node);
 }
 
@@ -121,13 +179,34 @@ void printAst(AstNode* node, int indent) {
             for (size_t i = 0; i < node->as.program.count; i++) {
                 printAst(node->as.program.stmts[i], indent + 1);
             }
-            break;  
+            break;
         case AST_RET:
             printf("Return Statement\n");
             printAst(node->as.retStmt.val, indent + 1);
-            break; 
+            break;
         case AST_NUM:
             printf("Number: %d\n", node->as.num.val);
+            break;
+        case AST_BINOP:
+            printf("Binary Operation: ");
+            switch (node->as.binop.op) {
+                case OP_ADD:
+                    printf("+\n");
+                    break;
+                case OP_SUB:
+                    printf("-\n");
+                    break;
+                case OP_MULT:
+                    printf("*\n");
+                    break;
+                case OP_DIV:
+                    printf("/\n");
+                    break;
+            }
+            printf("%*sLeft: ", indent + 2, "");
+            printAst(node->as.binop.left, 0);
+            printf("%*sRight: ", indent + 2, "");
+            printAst(node->as.binop.right, 0);
             break;
     }
 }
