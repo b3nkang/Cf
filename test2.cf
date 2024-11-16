@@ -1,1 +1,1 @@
-retourner 42;
+retourner (((6 + 6) / 2) * 3) / 9 - 2;
