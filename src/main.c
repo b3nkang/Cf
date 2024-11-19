@@ -9,50 +9,7 @@
 void compileCf (const char* sourceFile, const char* outputFile) {
     char* sourceText = readInputFile(sourceFile);
     Tokenizer* tzr = createTokenizer(sourceText);
-    // FILE* output = fopen(outputFile, "w");
-    // if (!output) {
-    //     fprintf(stderr, "Could not open output file %s\n", outputFile);
-    //     free(sourceText);
-    //     freeTokenizer(tzr);
-    //     exit(1);
-    // }
-    // Token* currTok;
     TokenArray* tokArr = createTokenArray();
-    // for (;;) {
-    //     currTok = getNextToken(tzr);
-    //     switch (currTok->type) {
-    //         case RET_TOK: {
-    //             addToken(tokArr,currTok);
-    //             // Token* valueTok = getNextToken(tzr);
-    //             // if (valueTok->type == NUM_TOK) {
-    //             //     addToken(tokArr,valueTok);
-    //             //     fprintf(output, "global _main\n");
-    //             //     fprintf(output, "section .text\n");
-    //             //     fprintf(output, "_main:\n");
-    //             //     fprintf(output, "    mov rax, %s\n", valueTok->value);
-    //             //     fprintf(output, "    ret\n");
-    //             // }
-    //             // freeToken(valueTok);
-    //             continue;
-    //         }
-    //         case EOF_TOK:
-    //             addToken(tokArr,currTok);
-    //             // freeToken(currTok);
-    //             // goto cleanup;
-    //             break;
-    //         case SEMI_TOK:
-    //             addToken(tokArr,currTok);
-    //             continue;
-    //         case NUM_TOK:
-    //             addToken(tokArr,currTok);
-    //             continue;
-    //         default:
-    //             printf("error unrecognized token");
-    //             // freeToken(currTok);
-    //             // goto cleanup;
-    //             break;
-    //     }
-    // }
     while (1) {
         Token* currTok = getNextToken(tzr);
         addToken(tokArr, currTok);
@@ -65,7 +22,6 @@ void compileCf (const char* sourceFile, const char* outputFile) {
     printf("AST Structure:\n");
     printAst(programAst, 4);
     printf("----------------\n////////////////\n");
-
     FILE* output = fopen(outputFile, "w");
     if (!output) {
         fprintf(stderr, "Could not open output file %s\n", outputFile);
@@ -73,25 +29,9 @@ void compileCf (const char* sourceFile, const char* outputFile) {
         freeTokenizer(tzr);
         exit(1);
     }
-    // fprintf(output, "global _main\n");
-    // fprintf(output, "section .text\n");
-    // fprintf(output, "_main:\n");
-
-    // // TODO: place with proper traversl of ast
-    // if (programAst->type == AST_PROG && 
-    //     programAst->as.program.count > 0 &&
-    //     programAst->as.program.stmts[0]->type == AST_RET) {
-        
-    //     AstNode* returnNode = programAst->as.program.stmts[0];
-    //     if (returnNode->as.retStmt.val->type == AST_NUM) {
-    //         fprintf(output, "    mov rax, %d\n", returnNode->as.retStmt.val->as.num.val);
-    //     }
-    // }
-    // fprintf(output, "    ret\n");
     CodeGenContext* context = createCodeGenContext(output);
     generateCode(context, programAst);
     freeCodeGenContext(context);
-
 // cleanup:
     printf("----------------\nToken Array Contents:\n");
     for (size_t i = 0; i < tokArr->count; i++) {
