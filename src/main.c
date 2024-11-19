@@ -109,6 +109,24 @@ void compileCf (const char* sourceFile, const char* outputFile) {
             case RET_TOK:
                 printf("RETURN, Value = %s\n", tokArr->tokens[i]->value);
                 break;
+            case DIV_TOK:
+                printf("DIV\n");
+                break;
+            case MULT_TOK:
+                printf("MULT\n");
+                break;
+            case PLUS_TOK:
+                printf("PLUS\n");
+                break;
+            case MINUS_TOK:
+                printf("MINUS\n");
+                break;
+            case LPAREN_TOK:
+                printf("LPAREN\n");
+                break;
+            case RPAREN_TOK:
+                printf("RPAREN\n");
+                break;
             default:
                 printf("UNKNOWN\n");
         }
