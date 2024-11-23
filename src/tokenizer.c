@@ -80,6 +80,12 @@ Token* getNextToken(Tokenizer* tokenizer) {
                 tokenizer->position++;
                 tokenizer->currCol++;
                 return retTok;
+            case '=':
+                retTok->type = EQ_TOK;
+                retTok->value = NULL;
+                tokenizer->position++;
+                tokenizer->currCol++;
+                return retTok;
         }
         if (isdigit(currChar)) {
             free(retTok);
@@ -93,26 +99,6 @@ Token* getNextToken(Tokenizer* tokenizer) {
         exit(1);
     }
 }
-
-//         if (isdigit(currChar)) {
-//             return readNum(tokenizer);
-//         }
-//         if (currChar == ';') {
-//             Token* retTok = (Token*)malloc(sizeof(Token));
-//             retTok->type = SEMI_TOK;
-//             retTok->value = NULL;
-//             retTok->ln = tokenizer->currLn;
-//             retTok->col = tokenizer->currCol;
-//             tokenizer->position++;
-//             return retTok;
-//         }
-//         if (isalpha(currChar)) {
-//             return readIdentifier(tokenizer);
-//         }
-//         fprintf(stderr, "Error: Unexpected character '%c' at position %zu\n", currChar, tokenizer->position);
-//         exit(1);
-//     }
-// }
 
 Token* readNum(Tokenizer* tokenizer) {
     size_t numStart = tokenizer->position;
@@ -137,22 +123,26 @@ Token* readIdentifier(Tokenizer* tokenizer) {
     }
     size_t wordEnd = tokenizer->position;
     size_t wordLen = wordEnd - wordStart;
-    char* wordBuf = (char*)malloc(sizeof(wordLen+1));
-    strncpy(wordBuf,&tokenizer->inputSource[wordStart],wordLen);
+    char* wordBuf = (char*)malloc(sizeof(char) * (wordLen + 1));
+    strncpy(wordBuf, &tokenizer->inputSource[wordStart], wordLen);
     wordBuf[wordLen] = '\0';
     Token* retTok = (Token*)malloc(sizeof(Token));
-    if (strncmp(&tokenizer->inputSource[wordStart],"retourner",wordLen) == 0 && wordLen == 9) {
+    retTok->ln = tokenizer->currLn;
+    retTok->col = tokenizer->currCol;
+    if (strcmp(wordBuf, "retourner") == 0) {
         retTok->type = RET_TOK;
         retTok->value = wordBuf;
-        retTok->ln = tokenizer->currLn;
-        retTok->col = tokenizer->currCol;
         return retTok;
     }
-    // TODO: implement tokenizing for strings
-    free(wordBuf);
-    free(retTok);
-    fprintf(stderr, "Error: Unknown identifier at position %zu\n", wordStart);
-    exit(1);
+    if (strcmp(wordBuf, "soit") == 0) {
+        retTok->type = VAR_TOK;
+        retTok->value = wordBuf;
+        return retTok;
+    }
+    // else is identifier
+    retTok->type = IDENT_TOK;
+    retTok->value = wordBuf;
+    return retTok;
 }
 
 void freeTokenizer(Tokenizer* tokenizer) {
