@@ -23,14 +23,14 @@ void generateProgram(CodeGenContext* context, AstNode* node) {
     for (size_t i = 0; i < node->as.program.count; i++) {
         generateCode(context, node->as.program.stmts[i]);
     }
-    fprintf(context->output, "    leave\n");
-    fprintf(context->output, "    and rsp, -16\n");
 }
 
 
 void generateReturn(CodeGenContext* context, AstNode* node) {
     generateExpression(context, node->as.retStmt.val,8);
     // fprintf(context->output, "    ret\n");
+    fprintf(context->output, "    leave\n");
+    fprintf(context->output, "    and rsp, -16\n");
     fprintf(context->output, "    mov rdi, rax\n");
     fprintf(context->output, "    mov rax, 0x2000001\n");
     fprintf(context->output, "    syscall\n");
