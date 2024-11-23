@@ -5,10 +5,13 @@
 #include <stdio.h>
 
 typedef enum {
-    NUM_TOK,
-    SEMI_TOK,
     EOF_TOK,
+    SEMI_TOK,
     RET_TOK,
+    VAR_TOK,
+    IDENT_TOK,
+    EQ_TOK,
+    NUM_TOK,
     PLUS_TOK,
     MINUS_TOK,
     MULT_TOK,
