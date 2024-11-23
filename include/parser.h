@@ -6,7 +6,9 @@ typedef enum {
     AST_PROG,
     AST_NUM,
     AST_RET,
-    AST_BINOP
+    AST_BINOP,
+    AST_VAR_DECL,
+    AST_VAR_REF
 } AstNodeType;
 
 typedef enum {
@@ -39,6 +41,15 @@ typedef struct AstNode {
             struct AstNode* left;
             struct AstNode* right;
         } binop;
+
+        struct {
+            char* name;
+            struct AstNode* initializer;
+        } varDecl;
+        
+        struct {
+            char* name;
+        } varRef;
 
     } as;
 } AstNode;
