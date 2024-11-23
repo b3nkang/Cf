@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../include/parser.h"
 
 AstNode* parse(TokenArray* tokens, const char* fileName);
@@ -7,6 +8,7 @@ static AstNode* parseProgram(Parser* parser);
 static AstNode* parseStatement(Parser* parser);
 static AstNode* parseReturnStatement(Parser* parser);
 static AstNode* parseExpression(Parser* parser);
+static AstNode* parseVarDeclaration(Parser* parser);
 static AstNode* parseTerm(Parser* parser);
 static AstNode* parseFactor(Parser* parser);
 static AstNode* parsePrimary(Parser* parser);
@@ -62,8 +64,10 @@ static AstNode* parseStatement(Parser* parser) {
     if (match(parser, RET_TOK)) {
         return parseReturnStatement(parser);
     }
-    parserError(parser, "Expected statement");
-    return NULL;
+    if (match(parser, VAR_TOK)) {
+        return parseVarDeclaration(parser);
+    }
+    return parseExpression(parser);
 }
 
 static AstNode* parseReturnStatement(Parser* parser) {
@@ -96,6 +100,30 @@ static AstNode* parseExpression(Parser* parser) {
         left = binop;
     }
     return left;
+}
+
+static AstNode* parseVarDeclaration(Parser* parser) {
+    Token* varToken = advance(parser);  // consume var
+    if (!match(parser, IDENT_TOK)) {
+        parserError(parser, "Expected identifier after the variable (e.g. assigne)");
+    }
+    Token* nameToken = advance(parser);
+    if (!match(parser, EQ_TOK)) {
+        parserError(parser, "Expected '=' after identifier in variable declaration");
+    }
+    advance(parser);    // consume '='
+    AstNode* initializer = parseExpression(parser);
+    if (!match(parser, SEMI_TOK)) {
+        parserError(parser, "Expected ';' after variable declaration");
+    }
+    advance(parser);    // consume ';'
+    AstNode* node = malloc(sizeof(AstNode));
+    node->type = AST_VAR_DECL;
+    node->ln = varToken->ln;
+    node->col = varToken->col;
+    node->as.varDecl.name = strdup(nameToken->value);
+    node->as.varDecl.initializer = initializer;
+    return node;
 }
 
 static AstNode* parseTerm(Parser* parser) {
@@ -143,6 +171,15 @@ static AstNode* parsePrimary(Parser* parser) {
         numNode->as.num.val = atoi(numToken->value);
         return numNode;
     }
+    if (current->type == IDENT_TOK) {
+        Token* idToken = advance(parser);
+        AstNode* node = malloc(sizeof(AstNode));
+        node->type = AST_VAR_REF;
+        node->ln = idToken->ln;
+        node->col = idToken->col;
+        node->as.varRef.name = strdup(idToken->value);
+        return node;
+    }
     parserError(parser, "Expected expression");
     return NULL;
 }
@@ -162,6 +199,13 @@ void freeAstNode(AstNode* node) {
         case AST_BINOP:
             freeAstNode(node->as.binop.left);
             freeAstNode(node->as.binop.right);
+            break;
+        case AST_VAR_DECL:
+            free(node->as.varDecl.name);
+            freeAstNode(node->as.varDecl.initializer);
+            break;
+        case AST_VAR_REF:
+            free(node->as.varRef.name);
             break;
         case AST_NUM:
             break;
@@ -186,6 +230,14 @@ void printAst(AstNode* node, int indent) {
             break;
         case AST_NUM:
             printf("Number: %d\n", node->as.num.val);
+            break;
+        case AST_VAR_DECL:
+            printf("Variable Declaration: %s\n", node->as.varDecl.name);
+            printf("%*sInitializer:\n", indent + 2, "");
+            printAst(node->as.varDecl.initializer, indent + 2);
+            break;
+        case AST_VAR_REF:
+            printf("Variable Reference: %s\n", node->as.varRef.name);
             break;
         case AST_BINOP:
             printf("Binary Operation: ");
