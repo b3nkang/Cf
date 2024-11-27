@@ -2,11 +2,13 @@
 
 #include <stdio.h>
 #include "parser.h"
+#include "symTab.h"
 
 typedef struct {
     FILE* output;
     const char* currentFunction;
     int labelCount;
+    SymbolTable* symbols;
 } CodeGenContext;
 
 CodeGenContext* createCodeGenContext(FILE* output);
