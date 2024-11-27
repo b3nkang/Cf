@@ -6,11 +6,32 @@ CodeGenContext* createCodeGenContext(FILE* output) {
     context->output = output;
     context->currentFunction = NULL;
     context->labelCount = 0;
+    context->symbols = createSymbolTable();
     return context;
 }
 
 void freeCodeGenContext(CodeGenContext* context) {
+    freeSymbolTable(context->symbols);
     free(context);
+}
+
+void generateVarDeclaration(CodeGenContext* context, AstNode* node) {
+    generateExpression(context, node->as.varDecl.initializer, 8);
+    Symbol* sym = addSymbol(context->symbols, node->as.varDecl.name);
+    if (!sym) {
+        fprintf(stderr, "Error: Variable '%s' already declared\n", node->as.varDecl.name);
+        exit(1);
+    }
+    fprintf(context->output, "    mov [rbp - %d], rax\n", sym->stackOffset);
+}
+
+void generateVarReference(CodeGenContext* context, AstNode* node) {
+    Symbol* sym = lookupSymbol(context->symbols, node->as.varRef.name);
+    if (!sym) {
+        fprintf(stderr, "Error: Undefined variable '%s'\n", node->as.varRef.name);
+        exit(1);
+    }
+    fprintf(context->output, "    mov rax, [rbp - %d]\n", sym->stackOffset);
 }
 
 void generateProgram(CodeGenContext* context, AstNode* node) {
@@ -40,6 +61,9 @@ void generateExpression(CodeGenContext* context, AstNode* node, int stackOffset)
     switch (node->type) {
         case AST_NUM:
             fprintf(context->output, "    mov rax, %d\n", node->as.num.val);
+            break;
+        case AST_VAR_REF:
+            generateVarReference(context, node);
             break;
         case AST_BINOP:
             generateExpression(context, node->as.binop.left, stackOffset);
@@ -77,6 +101,9 @@ void generateCode(CodeGenContext* context, AstNode* node) {
             break;
         case AST_RET:
             generateReturn(context, node);
+            break;
+        case AST_VAR_DECL:
+            generateVarDeclaration(context, node);
             break;
         default:
             fprintf(stderr, "Error: Unknown node type in code generation\n");
