@@ -9,19 +9,19 @@ LDFLAGS = -lSystem -syslibroot $(shell xcrun -sdk macosx --show-sdk-path) -e _ma
 
 # Files
 COMPILER = cf
-ASM_FILE = test2.asm
+ASM_FILE = test3.asm
 OBJ_FILE = program.o
 EXEC = program
-TEST_FILE_INPUT = test2.cf
+TEST_FILE_INPUT = test3.cf
 
 # Source files
-SRCS = src/main.c src/tokenizer.c src/fileUtils.c src/parser.c src/codeGen.c
+SRCS = src/main.c src/tokenizer.c src/fileUtils.c src/parser.c src/codeGen.c src/symTab.c
 
 # Object files are generated from source files
 OBJS = $(SRCS:.c=.o)
 
 # Header files
-HEADERS = include/fileUtils.h include/tokenize.h include/parser.h include/codeGen.h
+HEADERS = include/fileUtils.h include/tokenize.h include/parser.h include/codeGen.h include/symTab.h
 
 # Default target
 all: $(COMPILER)
