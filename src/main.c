@@ -67,6 +67,15 @@ void compileCf (const char* sourceFile, const char* outputFile) {
             case RPAREN_TOK:
                 printf("RPAREN\n");
                 break;
+            case EQ_TOK:
+                printf("EQ\n");
+                break;
+            case VAR_TOK:
+                printf("VAR\n");
+                break;
+            case IDENT_TOK:
+                printf("IDENT\n");
+                break;
             default:
                 printf("UNKNOWN\n");
         }
@@ -85,6 +94,6 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
     printf("Ingesting input file: %s\n",argv[1]);
-    compileCf(argv[1],"test2.asm");
+    compileCf(argv[1],"test3.asm");
     return EXIT_SUCCESS;
 }
