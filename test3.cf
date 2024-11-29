@@ -1,0 +1,8 @@
+soit x1 = 7;
+soit y1 = 11;
+soit x2 = 4;
+soit y2 = 8;
+soit dx = x2 - x1;
+soit dy = y2 - y1;
+soit distanceCarre = dx * dx + dy * dy;
+retourner distanceCarre;
