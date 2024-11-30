@@ -12,6 +12,7 @@ static AstNode* parseVarDeclaration(Parser* parser);
 static AstNode* parseTerm(Parser* parser);
 static AstNode* parseFactor(Parser* parser);
 static AstNode* parsePrimary(Parser* parser);
+static AstNode* parseArithmetic(Parser* parser);  
 
 static Token* peek(Parser* parser) {
     if (parser->currPos >= parser->tokens->count) {
@@ -86,6 +87,31 @@ static AstNode* parseReturnStatement(Parser* parser) {
 }
 
 static AstNode* parseExpression(Parser* parser) {
+    AstNode* left = parseArithmetic(parser);
+    while (match(parser, EQEQ_TOK) || match(parser, NEQ_TOK) || match(parser, LT_TOK) || match(parser, LEQ_TOK) || match(parser, GT_TOK) || match(parser, GEQ_TOK)) {
+        Token* op = advance(parser);
+        AstNode* right = parseArithmetic(parser);
+        AstNode* binop = malloc(sizeof(AstNode));
+        binop->type = AST_BINOP;
+        binop->ln = op->ln;
+        binop->col = op->col;
+        binop->as.binop.left = left;
+        binop->as.binop.right = right;
+        switch (op->type) {
+            case EQEQ_TOK: binop->as.binop.op = OP_EQ; break;
+            case NEQ_TOK:  binop->as.binop.op = OP_NEQ; break;
+            case LT_TOK:   binop->as.binop.op = OP_LT; break;
+            case LEQ_TOK:  binop->as.binop.op = OP_LEQ; break;
+            case GT_TOK:   binop->as.binop.op = OP_GT; break;
+            case GEQ_TOK:  binop->as.binop.op = OP_GEQ; break;
+            default: break;
+        }
+        left = binop;
+    }
+    return left;
+}
+
+static AstNode* parseArithmetic(Parser* parser) {
     AstNode* left = parseTerm(parser);
     while (match(parser, PLUS_TOK) || match(parser, MINUS_TOK)) {
         Token* op = advance(parser);
@@ -242,18 +268,16 @@ void printAst(AstNode* node, int indent) {
         case AST_BINOP:
             printf("Binary Operation: ");
             switch (node->as.binop.op) {
-                case OP_ADD:
-                    printf("+\n");
-                    break;
-                case OP_SUB:
-                    printf("-\n");
-                    break;
-                case OP_MULT:
-                    printf("*\n");
-                    break;
-                case OP_DIV:
-                    printf("/\n");
-                    break;
+                case OP_ADD: printf("+\n"); break;
+                case OP_SUB: printf("-\n"); break;
+                case OP_MULT: printf("*\n"); break;
+                case OP_DIV: printf("/\n"); break;
+                case OP_EQ: printf("==\n"); break;
+                case OP_NEQ: printf("!=\n"); break;
+                case OP_LT: printf("<\n"); break;
+                case OP_LEQ: printf("<=\n"); break;
+                case OP_GT: printf(">\n"); break;
+                case OP_GEQ: printf(">=\n"); break;
             }
             printf("%*sLeft: ", indent + 2, "");
             printAst(node->as.binop.left, 0);
