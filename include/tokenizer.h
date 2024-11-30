@@ -5,19 +5,25 @@
 #include <stdio.h>
 
 typedef enum {
-    EOF_TOK,
-    SEMI_TOK,
-    RET_TOK,
-    VAR_TOK,
-    IDENT_TOK,
-    EQ_TOK,
-    NUM_TOK,
-    PLUS_TOK,
-    MINUS_TOK,
-    MULT_TOK,
-    DIV_TOK,
-    LPAREN_TOK,
-    RPAREN_TOK
+    EOF_TOK,    // \0
+    SEMI_TOK,   // ;
+    RET_TOK,    // retourner
+    VAR_TOK,    // soit
+    IDENT_TOK,  // <var>
+    EQ_TOK,     // =
+    EQEQ_TOK,   // ==
+    NEQ_TOK,    // !=
+    LT_TOK,     // <
+    LEQ_TOK,    // <=
+    GT_TOK,     // >
+    GEQ_TOK,    // >=
+    NUM_TOK,    // <num>
+    PLUS_TOK,   // +
+    MINUS_TOK,  // -
+    MULT_TOK,   // *
+    DIV_TOK,    // /
+    LPAREN_TOK, // (
+    RPAREN_TOK  // )
 } TokenType;
 
 typedef struct {
