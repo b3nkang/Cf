@@ -15,7 +15,13 @@ typedef enum {
     OP_ADD,
     OP_SUB,
     OP_MULT,
-    OP_DIV
+    OP_DIV,
+    OP_EQ,
+    OP_NEQ,
+    OP_LT,
+    OP_LEQ,
+    OP_GT,
+    OP_GEQ
 } BinaryOpType;
 
 typedef struct AstNode {
