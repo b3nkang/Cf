@@ -81,11 +81,61 @@ Token* getNextToken(Tokenizer* tokenizer) {
                 tokenizer->currCol++;
                 return retTok;
             case '=':
-                retTok->type = EQ_TOK;
-                retTok->value = NULL;
-                tokenizer->position++;
-                tokenizer->currCol++;
-                return retTok;
+                if (tokenizer->inputSource[tokenizer->position + 1] == '=') {
+                    retTok->type = EQEQ_TOK;
+                    retTok->value = NULL;
+                    tokenizer->position += 2;
+                    tokenizer->currCol += 2;
+                    return retTok;
+                } else {
+                    retTok->type = EQ_TOK;
+                    retTok->value = NULL;
+                    tokenizer->position++;
+                    tokenizer->currCol++;
+                    return retTok;
+                }
+            case '!':
+                if (tokenizer->inputSource[tokenizer->position + 1] == '=') {
+                    retTok->type = NEQ_TOK;
+                    retTok->value = NULL;
+                    tokenizer->position += 2;
+                    tokenizer->currCol += 2;
+                    return retTok;
+                } else {
+                    fprintf(stderr, "Error: Expected '=' after '!' at line %d, column %d\n", 
+                            tokenizer->currLn, tokenizer->currCol);
+                    exit(1);
+                }
+            
+            case '<':
+                if (tokenizer->inputSource[tokenizer->position + 1] == '=') {
+                    retTok->type = LEQ_TOK;
+                    retTok->value = NULL;
+                    tokenizer->position += 2;
+                    tokenizer->currCol += 2;
+                    return retTok;
+                } else {
+                    retTok->type = LT_TOK;
+                    retTok->value = NULL;
+                    tokenizer->position++;
+                    tokenizer->currCol++;
+                    return retTok;
+                }
+            
+            case '>':
+                if (tokenizer->inputSource[tokenizer->position + 1] == '=') {
+                    retTok->type = GEQ_TOK;
+                    retTok->value = NULL;
+                    tokenizer->position += 2;
+                    tokenizer->currCol += 2;
+                    return retTok;
+                } else {
+                    retTok->type = GT_TOK;
+                    retTok->value = NULL;
+                    tokenizer->position++;
+                    tokenizer->currCol++;
+                    return retTok;
+                }
         }
         if (isdigit(currChar)) {
             free(retTok);
