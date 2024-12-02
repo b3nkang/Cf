@@ -1,0 +1,22 @@
+soit valeur1 = 2;
+soit valeur2 = 3;
+
+soit resultatSuperieurOuEgal1 = valeur1*4 >= valeur2;
+soit resultatSuperieurOuEgal2 = valeur1*3 >= valeur2*2;
+soit resultatInferieurOuEgal1 = valeur1 <= valeur2;
+soit resultatInferieurOuEgal2 = valeur1*3 <= valeur2*2;
+soit resultatEgal1 = valeur1*3 == valeur2*2;
+soit resultatEgal2 = valeur1 == valeur2;
+soit resultatDifferent1 = valeur1 != valeur2;
+soit resultatDifferent2 = valeur1*3 != valeur2*2;
+soit resultatSuperieur1 = valeur1*4 > valeur2;
+soit resultatSuperieur2 = valeur1*3 > valeur2*2;
+soit resultatInferieur1 = valeur1 < valeur2;
+soit resultatInferieur2 = valeur1*3 < valeur2*2;
+
+retourner   resultatSuperieurOuEgal1 + resultatSuperieurOuEgal2 + 
+            resultatInferieurOuEgal1 + resultatInferieurOuEgal2 + 
+            resultatEgal1 + resultatEgal2 + resultatDifferent1 + resultatDifferent2 + 
+            resultatSuperieur1 + resultatSuperieur2 + 
+            resultatInferieur1 + resultatInferieur2;
+

@@ -94,6 +94,6 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
     printf("Ingesting input file: %s\n",argv[1]);
-    compileCf(argv[1],"test3.asm");
+    compileCf(argv[1],"test4.asm");
     return EXIT_SUCCESS;
 }
