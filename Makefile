@@ -9,10 +9,10 @@ LDFLAGS = -lSystem -syslibroot $(shell xcrun -sdk macosx --show-sdk-path) -e _ma
 
 # Files
 COMPILER = cf
-ASM_FILE = test3.asm
+ASM_FILE = test4.asm
 OBJ_FILE = program.o
 EXEC = program
-TEST_FILE_INPUT = test3.cf
+TEST_FILE_INPUT = v4CfSample.cf
 
 # Source files
 SRCS = src/main.c src/tokenizer.c src/fileUtils.c src/parser.c src/codeGen.c src/symTab.c
