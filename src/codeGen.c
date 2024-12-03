@@ -148,13 +148,42 @@ void generateExpression(CodeGenContext* context, AstNode* node) {
     }
 }
 
+void generateIfStatement(CodeGenContext* context, AstNode* node) {
+    int labelFalse = context->labelCount++;
+    int labelEnd = context->labelCount++;
+    generateExpression(context, node->as.ifStmt.condition);
+    appendToBuffer(context, "    cmp rax, 0\n");
+    appendToBuffer(context, "    je .L%d\n", labelFalse);
+    size_t thenCount = node->as.ifStmt.thenCount;
+    int thenEndsWithReturn = 0;
+    if (thenCount > 0 && node->as.ifStmt.thenStmts[thenCount - 1]->type == AST_RET) {
+        thenEndsWithReturn = 1;
+    }
+    for (size_t i = 0; i < thenCount; i++) {
+        generateCode(context, node->as.ifStmt.thenStmts[i]);
+    }
+    if (!thenEndsWithReturn) {
+        appendToBuffer(context, "    jmp .L%d\n", labelEnd);
+    }
+    appendToBuffer(context, ".L%d:\n", labelFalse);
+    size_t elseCount = node->as.ifStmt.elseCount;
+    int elseEndsWithReturn = 0;
+    if (elseCount > 0 && node->as.ifStmt.elseStmts[elseCount - 1]->type == AST_RET) {
+        elseEndsWithReturn = 1;
+    }
+    if (elseCount > 0) {
+        for (size_t i = 0; i < elseCount; i++) {
+            generateCode(context, node->as.ifStmt.elseStmts[i]);
+        }
+    }
+    if (!thenEndsWithReturn || !elseEndsWithReturn) {
+        appendToBuffer(context, ".L%d:\n", labelEnd);
+    }
+}
+
 void generateReturn(CodeGenContext* context, AstNode* node) {
     generateExpression(context, node->as.retStmt.val);
-    appendToBuffer(context, "    leave\n");
-    appendToBuffer(context, "    and rsp, -16\n");
-    appendToBuffer(context, "    mov rdi, rax\n");
-    appendToBuffer(context, "    mov rax, 0x2000001\n");
-    appendToBuffer(context, "    syscall\n");
+    appendToBuffer(context, "    jmp .L_return\n");
 }
 
 void generateCode(CodeGenContext* context, AstNode* node) {
@@ -168,6 +197,9 @@ void generateCode(CodeGenContext* context, AstNode* node) {
             break;
         case AST_VAR_DECL:
             generateVarDeclaration(context, node);
+            break;
+        case AST_IF:
+            generateIfStatement(context, node);
             break;
         default:
             fprintf(stderr, "Error: Unknown node type in code generation\n");
@@ -189,8 +221,18 @@ void generateProgram(CodeGenContext* context, AstNode* node) {
     fprintf(context->output, "    push rbp\n");
     fprintf(context->output, "    mov rbp, rsp\n");
     fprintf(context->output, "    sub rsp, %d\n", totalStackSize);
+
     fwrite(context->codeBuffer, 1, context->bufferSize, context->output);
+
+    fprintf(context->output, ".L_return:\n");
+    fprintf(context->output, "    leave\n");
+    fprintf(context->output, "    and rsp, -16\n");
+    fprintf(context->output, "    mov rdi, rax\n");
+    fprintf(context->output, "    mov rax, 0x2000001\n");
+    fprintf(context->output, "    syscall\n");
+
     free(context->codeBuffer);
+
     context->codeBuffer = NULL;
     context->bufferSize = 0;
     context->bufferCapacity = 0;

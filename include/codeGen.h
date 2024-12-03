@@ -25,4 +25,5 @@ void freeCodeGenContext(CodeGenContext* context);
 void generateCode(CodeGenContext* context, AstNode* node);
 void generateProgram(CodeGenContext* context, AstNode* node);
 void generateReturn(CodeGenContext* context, AstNode* node);
+void generateIfStatement(CodeGenContext* context, AstNode* node);
 void generateExpression(CodeGenContext* context, AstNode* node);
