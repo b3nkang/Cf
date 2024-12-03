@@ -1,6 +1,6 @@
 # Cf (C-french) Compiler
 
-This is Cf, an in-progress compiler that forms a minimal programming language meant to be written in French and, currently, with C-like syntax. In the future, the intention is to integrate nicer Python-like syntax. The compiler generates x86_64 assembly code for macOS.
+This is Cf, an in-progress compiler that forms a minimal programming language meant to be written in French and with C-like syntax. In the future, the intention is to integrate some nicer, Python-like features. The compiler generates x86_64 assembly code for macOS.
 
 ## Language Features
 
@@ -11,7 +11,7 @@ Cf currently supports:
 - Integer literals
 - Expression grouping with parentheses
 - Variable declarations and assignments with `soit` (roughly semantically equivalent to `let`)
-- Control flow for if-else statements with `si` and `sinon` (sematically equivalent to `if` and `else`)
+- Control flow for if-else statements with `si` and `sinon` (semantically equivalent to `if` and `else`)
 - Return statements with `retourner` (equivalent to `return`)
 - Variable references in expressions
 - Scoping with `{` and `}`
