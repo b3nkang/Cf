@@ -1,4 +1,4 @@
-<ins>**premièrement...en français (traduit par ChatGPT). anglais ci-dessous.**</ins>
+<ins>**premièrement...en français. anglais ci-dessous.**</ins>
 
 # Compilateur Cf (C-français)
 
