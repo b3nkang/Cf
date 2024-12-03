@@ -8,7 +8,8 @@ typedef enum {
     AST_RET,
     AST_BINOP,
     AST_VAR_DECL,
-    AST_VAR_REF
+    AST_VAR_REF,
+    AST_IF
 } AstNodeType;
 
 typedef enum {
@@ -33,30 +34,31 @@ typedef struct AstNode {
             struct AstNode** stmts;
             size_t count;
         } program;
-
         struct {
             struct AstNode* val;
-        } retStmt;
-        
+        } retStmt; 
         struct {
             int val;
         } num;
-
         struct {
             BinaryOpType op;
             struct AstNode* left;
             struct AstNode* right;
         } binop;
-
         struct {
             char* name;
             struct AstNode* initializer;
         } varDecl;
-        
         struct {
             char* name;
         } varRef;
-
+        struct {
+            struct AstNode* condition;
+            struct AstNode** thenStmts;
+            size_t thenCount;
+            struct AstNode** elseStmts;
+            size_t elseCount;
+        } ifStmt;
     } as;
 } AstNode;
 

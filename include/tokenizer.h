@@ -23,7 +23,11 @@ typedef enum {
     MULT_TOK,   // *
     DIV_TOK,    // /
     LPAREN_TOK, // (
-    RPAREN_TOK  // )
+    RPAREN_TOK, // )
+    IF_TOK,     // si
+    ELSE_TOK,   // sinon
+    LBRACE_TOK, // {
+    RBRACE_TOK, // }
 } TokenType;
 
 typedef struct {

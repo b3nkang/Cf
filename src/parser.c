@@ -5,14 +5,15 @@
 
 AstNode* parse(TokenArray* tokens, const char* fileName);
 static AstNode* parseProgram(Parser* parser);
-static AstNode* parseStatement(Parser* parser);
 static AstNode* parseReturnStatement(Parser* parser);
-static AstNode* parseExpression(Parser* parser);
 static AstNode* parseVarDeclaration(Parser* parser);
+static AstNode* parseIfStatement(Parser* parser);
+static AstNode* parseStatement(Parser* parser);
+static AstNode* parseExpression(Parser* parser);
+static AstNode* parseArithmetic(Parser* parser);  
 static AstNode* parseTerm(Parser* parser);
 static AstNode* parseFactor(Parser* parser);
 static AstNode* parsePrimary(Parser* parser);
-static AstNode* parseArithmetic(Parser* parser);  
 
 static Token* peek(Parser* parser) {
     if (parser->currPos >= parser->tokens->count) {
@@ -61,14 +62,79 @@ static AstNode* parseProgram(Parser* parser) {
     return program;
 }
 
+static AstNode* parseIfStatement(Parser* parser) {
+    Token* ifToken = advance(parser);
+    AstNode* ifNode = malloc(sizeof(AstNode));
+    ifNode->type = AST_IF;
+    ifNode->ln = ifToken->ln;
+    ifNode->col = ifToken->col;
+    if (!match(parser, LPAREN_TOK)) {
+        parserError(parser, "Expected '(' after 'si'");
+    }
+    advance(parser);
+    ifNode->as.ifStmt.condition = parseExpression(parser);
+    if (!ifNode->as.ifStmt.condition) {
+        parserError(parser, "Expected condition in if statement");
+    }
+    if (!match(parser, RPAREN_TOK)) {
+        parserError(parser, "Expected ')' after condition");
+    }
+    advance(parser);
+    if (!match(parser, LBRACE_TOK)) {
+        parserError(parser, "Expected '{' after condition");
+    }
+    advance(parser);
+    ifNode->as.ifStmt.thenStmts = malloc(sizeof(AstNode*) * 16);
+    ifNode->as.ifStmt.thenCount = 0;
+    while (!match(parser, RBRACE_TOK)) {
+        AstNode* stmt = parseStatement(parser);
+        if (!stmt) {
+            parserError(parser, "Invalid statement in if block");
+        }
+        ifNode->as.ifStmt.thenStmts[ifNode->as.ifStmt.thenCount++] = stmt;
+    }
+    advance(parser);
+    ifNode->as.ifStmt.elseStmts = NULL;
+    ifNode->as.ifStmt.elseCount = 0;
+    if (match(parser, ELSE_TOK)) {
+        advance(parser);
+        if (!match(parser, LBRACE_TOK)) {
+            parserError(parser, "Expected '{' after 'sinon'");
+        }
+        advance(parser);
+        ifNode->as.ifStmt.elseStmts = malloc(sizeof(AstNode*) * 16);
+        while (!match(parser, RBRACE_TOK)) {
+            AstNode* stmt = parseStatement(parser);
+            if (!stmt) {
+                parserError(parser, "Invalid statement in else block");
+            }
+            ifNode->as.ifStmt.elseStmts[ifNode->as.ifStmt.elseCount++] = stmt;
+        }
+        advance(parser);
+    }
+    return ifNode;
+}
+
 static AstNode* parseStatement(Parser* parser) {
+    Token* current = peek(parser);
+    if (!current) {
+        parserError(parser, "Unexpected end of input");
+    }
+    printf("Parsing statement, current token type: %d\n", current->type);
     if (match(parser, RET_TOK)) {
         return parseReturnStatement(parser);
     }
     if (match(parser, VAR_TOK)) {
         return parseVarDeclaration(parser);
     }
-    return parseExpression(parser);
+    if (match(parser, IF_TOK)) {
+        return parseIfStatement(parser);
+    }
+    if (match(parser, NUM_TOK) || match(parser, IDENT_TOK) || match(parser, LPAREN_TOK)) {
+        return parseExpression(parser);
+    }
+    parserError(parser, "Expected statement");
+    return NULL;
 }
 
 static AstNode* parseReturnStatement(Parser* parser) {
@@ -88,9 +154,15 @@ static AstNode* parseReturnStatement(Parser* parser) {
 
 static AstNode* parseExpression(Parser* parser) {
     AstNode* left = parseArithmetic(parser);
+    if (!left) {
+        parserError(parser, "Expected expression");
+    }
     while (match(parser, EQEQ_TOK) || match(parser, NEQ_TOK) || match(parser, LT_TOK) || match(parser, LEQ_TOK) || match(parser, GT_TOK) || match(parser, GEQ_TOK)) {
         Token* op = advance(parser);
         AstNode* right = parseArithmetic(parser);
+        if (!right) {
+            parserError(parser, "Expected expression after operator");
+        }
         AstNode* binop = malloc(sizeof(AstNode));
         binop->type = AST_BINOP;
         binop->ln = op->ln;
@@ -104,7 +176,8 @@ static AstNode* parseExpression(Parser* parser) {
             case LEQ_TOK:  binop->as.binop.op = OP_LEQ; break;
             case GT_TOK:   binop->as.binop.op = OP_GT; break;
             case GEQ_TOK:  binop->as.binop.op = OP_GEQ; break;
-            default: break;
+            default:
+                parserError(parser, "Invalid comparison operator");
         }
         left = binop;
     }
@@ -233,6 +306,19 @@ void freeAstNode(AstNode* node) {
         case AST_VAR_REF:
             free(node->as.varRef.name);
             break;
+        case AST_IF:
+            freeAstNode(node->as.ifStmt.condition);
+            for (size_t i = 0; i < node->as.ifStmt.thenCount; i++) {
+                freeAstNode(node->as.ifStmt.thenStmts[i]);
+            }
+            free(node->as.ifStmt.thenStmts);
+            if (node->as.ifStmt.elseStmts) {
+                for (size_t i = 0; i < node->as.ifStmt.elseCount; i++) {
+                    freeAstNode(node->as.ifStmt.elseStmts[i]);
+                }
+                free(node->as.ifStmt.elseStmts);
+            }
+            break;
         case AST_NUM:
             break;
     }
@@ -283,6 +369,21 @@ void printAst(AstNode* node, int indent) {
             printAst(node->as.binop.left, 0);
             printf("%*sRight: ", indent + 2, "");
             printAst(node->as.binop.right, 0);
+            break;
+        case AST_IF:
+            printf("If Statement\n");
+            printf("%*sCondition:\n", indent + 2, "");
+            printAst(node->as.ifStmt.condition, indent + 2);
+            printf("%*sThen Block:\n", indent + 2, "");
+            for (size_t i = 0; i < node->as.ifStmt.thenCount; i++) {
+                printAst(node->as.ifStmt.thenStmts[i], indent + 3);
+            }
+            if (node->as.ifStmt.elseCount > 0) {
+                printf("%*sElse Block:\n", indent + 2, "");
+                for (size_t i = 0; i < node->as.ifStmt.elseCount; i++) {
+                    printAst(node->as.ifStmt.elseStmts[i], indent + 3);
+                }
+            }
             break;
     }
 }

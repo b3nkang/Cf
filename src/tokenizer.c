@@ -106,7 +106,6 @@ Token* getNextToken(Tokenizer* tokenizer) {
                             tokenizer->currLn, tokenizer->currCol);
                     exit(1);
                 }
-            
             case '<':
                 if (tokenizer->inputSource[tokenizer->position + 1] == '=') {
                     retTok->type = LEQ_TOK;
@@ -121,7 +120,6 @@ Token* getNextToken(Tokenizer* tokenizer) {
                     tokenizer->currCol++;
                     return retTok;
                 }
-            
             case '>':
                 if (tokenizer->inputSource[tokenizer->position + 1] == '=') {
                     retTok->type = GEQ_TOK;
@@ -136,6 +134,18 @@ Token* getNextToken(Tokenizer* tokenizer) {
                     tokenizer->currCol++;
                     return retTok;
                 }
+            case '{':
+                retTok->type = LBRACE_TOK;
+                retTok->value = NULL;
+                tokenizer->position++;
+                tokenizer->currCol++;
+                return retTok;
+            case '}':
+                retTok->type = RBRACE_TOK;
+                retTok->value = NULL;
+                tokenizer->position++;
+                tokenizer->currCol++;
+                return retTok;
         }
         if (isdigit(currChar)) {
             free(retTok);
@@ -186,6 +196,16 @@ Token* readIdentifier(Tokenizer* tokenizer) {
     }
     if (strcmp(wordBuf, "soit") == 0) {
         retTok->type = VAR_TOK;
+        retTok->value = wordBuf;
+        return retTok;
+    }
+    if (strcmp(wordBuf, "si") == 0) {
+        retTok->type = IF_TOK;
+        retTok->value = wordBuf;
+        return retTok;
+    }
+    if (strcmp(wordBuf, "sinon") == 0) {
+        retTok->type = ELSE_TOK;
         retTok->value = wordBuf;
         return retTok;
     }
