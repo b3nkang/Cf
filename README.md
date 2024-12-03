@@ -6,13 +6,14 @@ This is Cf, an in-progress compiler that forms a minimal programming language me
 
 Cf currently supports:
 
-- Variable declarations and assignments with `soit` (roughly sematically equivalent to `let`)
 - Basic arithmetic operations (+, -, \*, /)
 - Comparison operations (==, !=, <, <=, >, >=)
 - Integer literals
 - Expression grouping with parentheses
+- Variable declarations and assignments with `soit` (roughly semantically equivalent to `let`)
+- Control flow for if-else statements with `si` and `sinon` (sematically equivalent to `if` and `else`)
+- Return statements with `retourner` (equivalent to `return`)
 - Variable references in expressions
-- Control flow for if-else statements with `si` and `sinon`
 - Scoping with `{` and `}`
 - Error handling:
   - Syntax error detection with line and column numbers
@@ -21,13 +22,12 @@ Cf currently supports:
   - Missing semicolon detection
   - Invalid operator usage detection
   - Stack overflow protection for complex expressions
-- Return statements with `retourner`
 
 ### Syntax
 
 - Variables are declared using the `soit` keyword
 - Return statements use the `retourner` keyword
-- If-else statements use the `si` (if) and `sinon` (else) keywords
+- If-else statements use the `si` and `sinon` keywords
 - Statements must end with semicolons
 - Expressions follow standard operator precedence rules
 
@@ -43,7 +43,7 @@ Cf currently supports:
 ### Basic Arithmetic
 
 ```Cf
-retourner (((6 + 6) / 2) * 3) / 9 - 2;
+retourner (((6 + 6) / 2) * 3) / 9 - 2; // returns 0
 ```
 
 This example demonstrates nested arithmetic expressions and operator precedence.
@@ -123,7 +123,7 @@ si (valeur1 + valeur2 < valeur3) {
     } sinon {
         si (valeur3 + 1 == valeur1 + valeur2) {
             si (valeur2 - valeur1 - 2 >= 0) {
-                retourner ((valeur1 * valeur2) + valeur3) / 2; // expected return of 39 from this retourner statement
+                retourner ((valeur1 * valeur2) + valeur3) / 2; // expected to return 39
             } sinon {
                 retourner (valeur1 + valeur3) + valeur2;
             }
@@ -144,9 +144,9 @@ At the first level of the repository there are a collection of `asm` and `.cf` f
 
 ### Prerequisites
 
-- `gcc/clang`: Apple Clang version 16.0.0
-- `nasm`: >= 2.16.03
-- `Make`: GNU Make 3.81
+- GCC/Clang: Apple Clang version 16.0.0
+- NASM: >= 2.16.03
+- Make: GNU Make 3.81
 - macOS
 
 ### Building the Compiler
@@ -166,7 +166,7 @@ This will generate an assembly file named `test5.asm`.
 ### Running a Complete Build Pipeline
 
 ```bash
-make full CF_FILE=yourInput.cf ASM_FILE.asm
+make full CF_FILE=yourInput.cf ASM_FILE=yourPreferredOutputFileName.asm
 ```
 
 or just
@@ -200,41 +200,6 @@ The compiler follows a traditional compilation pipeline:
 4. Code generation (x86_64 assembly)
 
 ## Grammar
-
-<!-- ![grammar_latex_cogs](https://latex.codecogs.com/png.latex?%5Cdpi%7B100%7D&space;%5Cbegin%7Balign*%7D&space;%5Ctext%7Bprogram%7D&space;&%5Cto&space;%5Ctext%7Bstatement*%7D&space;%5Ctext%7BEOF%7D&space;%5C%5C&space;%5Ctext%7Bstatement%7D&space;&%5Cto&space;%5Ctext%7Breturn%7D&space;%5C%5C&space;%5Ctext%7Breturn%7D&space;&%5Cto&space;%5Bretourner%5D%5Ctext%7B&space;expr&space;%5B;%5D%7D&space;%5C%5C&space;%5Ctext%7Bexpr%7D&space;&%5Cto&space;%5Ctext%7Bliteral%7D&space;%5C%5C&space;%5Ctext%7Bliteral%7D&space;&%5Cto&space;%5Ctext%7Bnumber%7D&space;%5C%5C&space;%5Cend%7Balign*%7D) -->
-
-<!-- ![grammar_latex_cogs](<https://latex.codecogs.com/png.image?%5Cinline%20%5Clarge%20%5Cdpi%7B150%7D%5Cbg%7Bblack%7D$$%5Cbegin%7Balign*%7D%5Ctext%7Bprogram%7D&%5Cto%5Ctext%7Bstatement%7D*%5Ctext%7BEOF%7D%5C%5C%5Ctext%7Bstatement%7D&%5Cto%5Ctext%7Breturn%7D%5C%5C%5Ctext%7Breturn%7D&%5Cto%5B%5Ctext%7Bretourner%7D%5D%5Ctext%7Bexpr%5B;%5D%7D%5C%5C%5Ctext%7Bexpr%7D&%5Cto%5Ctext%7Bterm%7D%5C((%5B+%5D%7C%5B-%5D)%5Ctext%7Bterm%7D)*%5C%5C%5Ctext%7Bterm%7D&%5Cto%5Ctext%7Bfactor%7D%5C((%5B*%5D%7C%5B/%5D)%5Ctext%7Bfactor%7D)*%5C%5C%5Ctext%7Bfactor%7D&%5Cto%5B(%5D%5Ctext%7Bexpr%7D%5B)%5D%5C;%7C%5C;%5Ctext%7Bprimary%7D%5C%5C%5Ctext%7Bprimary%7D&%5Cto%5Ctext%7Bnumber%7D%5Cend%7Balign*%7D$$>) -->
-
-<!-- $$
-\begin{align*}
-\text{program} &\to \text{statement}* \text{ EOF} \\
-\text{statement} &\to \text{return} \;|\; \text{varDecl} \\
-\text{return} &\to [retourner]\text{ expr [;]} \\
-\text{varDecl} &\to [soit]\text{ identifier [=] expr [;]} \\
-\text{expr} &\to \text{term}\ (([+]|[-])\text{ term})* \\
-\text{term} &\to \text{factor}\ (([*]|[/])\text{ factor})* \\
-\text{factor} &\to [(]\text{ expr }[)] \;|\; \text{primary} \\
-\text{primary} &\to \text{number} \;|\; \text{identifier}
-\end{align*}
-$$ -->
-
-<!-- ![grammar_latex_cogs](<https://latex.codecogs.com/png.image?%5Cinline%20%5Clarge%20%5Cdpi%7B150%7D%5Cbg%7Bblack%7D$$%5Cbegin%7Balign*%7D%5Ctext%7Bprogram%7D&%5Cto%5Ctext%7Bstatement%7D*%5Ctext%7BEOF%7D%5C%5C%5Ctext%7Bstatement%7D&%5Cto%5Ctext%7Breturn%7D%5C;%7C%5C;%5Ctext%7BvarDecl%7D%5C%5C%5Ctext%7Breturn%7D&%5Cto%5Bretourner%5D%5Ctext%7Bexpr%5B;%5D%7D%5C%5C%5Ctext%7BvarDecl%7D&%5Cto%5Bsoit%5D%5Ctext%7Bidentifier%5B=%5Dexpr%5B;%5D%7D%5C%5C%5Ctext%7Bexpr%7D&%5Cto%5Ctext%7Bterm%7D%5C((%5B+%5D%7C%5B-%5D)%5Ctext%7Bterm%7D)*%5C%5C%5Ctext%7Bterm%7D&%5Cto%5Ctext%7Bfactor%7D%5C((%5B*%5D%7C%5B/%5D)%5Ctext%7Bfactor%7D)*%5C%5C%5Ctext%7Bfactor%7D&%5Cto%5B(%5D%5Ctext%7Bexpr%7D%5B)%5D%5C;%7C%5C;%5Ctext%7Bprimary%7D%5C%5C%5Ctext%7Bprimary%7D&%5Cto%5Ctext%7Bnumber%7D%5C;%7C%5C;%5Ctext%7Bidentifier%7D%5Cend%7Balign*%7D$$>) -->
-
-  <!-- $$
-  \begin{align*}
-  \text{program} &\to \text{statement}* \text{ EOF} \\
-  \text{statement} &\to \text{return} \;|\; \text{varDecl} \\
-  \text{return} &\to [retourner]\text{ expr [;]} \\
-  \text{varDecl} &\to [soit]\text{ identifier [=] expr [;]} \\
-  \text{expr} &\to \text{arithmetic}\ ((\text{==}|\text{!=}|< |\leq |> |\geq )\text{ arithmetic})* \\
-  \text{arithmetic} &\to \text{term}\ (([+]|[-])\text{ term})* \\
-  \text{term} &\to \text{factor}\ (([*]|[/])\text{ factor})* \\
-  \text{factor} &\to [(]\text{ expr }[)] \;|\; \text{primary} \\
-  \text{primary} &\to \text{number} \;|\; \text{identifier}
-  \end{align*}
-  $$ -->
-
-<!-- ![grammar_latex_cogs](<https://latex.codecogs.com/png.image?%5Cinline%20%5Clarge%20%5Cdpi%7B150%7D%5Cbg%7Bblack%7D$$%5Cbegin%7Balign*%7D%5Ctext%7Bprogram%7D&%5Cto%5Ctext%7Bstatement%7D*%5Ctext%7BEOF%7D%5C%5C%5Ctext%7Bstatement%7D&%5Cto%5Ctext%7Breturn%7D%5C;%7C%5C;%5Ctext%7BvarDecl%7D%5C%5C%5Ctext%7Breturn%7D&%5Cto%5Bretourner%5D%5Ctext%7Bexpr%5B;%5D%7D%5C%5C%5Ctext%7BvarDecl%7D&%5Cto%5Bsoit%5D%5Ctext%7Bidentifier%5B=%5Dexpr%5B;%5D%7D%5C%5C%5Ctext%7Bexpr%7D&%5Cto%5Ctext%7Barithmetic%7D%5C((%5Ctext%7B==%7D%7C%5Ctext%7B!=%7D%7C%3C%7C%5Cleq%7C%3E%7C%5Cgeq)%5Ctext%7Barithmetic%7D)*%5C%5C%5Ctext%7Barithmetic%7D&%5Cto%5Ctext%7Bterm%7D%5C((%5B+%5D%7C%5B-%5D)%5Ctext%7Bterm%7D)*%5C%5C%5Ctext%7Bterm%7D&%5Cto%5Ctext%7Bfactor%7D%5C((%5B*%5D%7C%5B/%5D)%5Ctext%7Bfactor%7D)*%5C%5C%5Ctext%7Bfactor%7D&%5Cto%5B(%5D%5Ctext%7Bexpr%7D%5B)%5D%5C;%7C%5C;%5Ctext%7Bprimary%7D%5C%5C%5Ctext%7Bprimary%7D&%5Cto%5Ctext%7Bnumber%7D%5C;%7C%5C;%5Ctext%7Bidentifier%7D%5Cend%7Balign*%7D$$>) -->
 
 <!-- $$
 \begin{align*}
