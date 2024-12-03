@@ -47,7 +47,7 @@ retourner (((6 + 6) / 2) * 3) / 9 - 2;
 
 Cet exemple démontre les expressions arithmétiques imbriquées et la précédence des opérateurs.
 
-### Déclaration de Variables et Calcul de Distance
+### Déclaration de Variables
 
 ```Cf
 soit x1 = 7;
@@ -190,7 +190,7 @@ retourner (((6 + 6) / 2) * 3) / 9 - 2;
 
 This example demonstrates nested arithmetic expressions and operator precedence.
 
-### Variable Declaration and Distance Calculation
+### Variable Declaration
 
 ```Cf
 soit x1 = 7;
