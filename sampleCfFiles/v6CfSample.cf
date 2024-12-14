@@ -1,0 +1,10 @@
+soit test = 10;
+
+si (test * (56 / 7) + 1 > 80) {
+    soit test2 = 83;
+    si (test2 == test) {
+        retourner 100;
+    } sinon  {
+        retourner 101;
+    }
+}
