@@ -8,11 +8,13 @@ ASMFLAGS = -f macho64
 LDFLAGS = -lSystem -syslibroot $(shell xcrun -sdk macosx --show-sdk-path) -e _main -arch x86_64 -platform_version macos 13.0.0 13.0.0
 
 # Inputs
-ASM_FILE = test5.asm
-CF_FILE = v5CfSample.cf
+ASM_INPUT = test6.asm
+CF_INPUT = v6CfSample.cf
 TEST_FILE_INPUT = $(CF_FILE) $(ASM_FILE)
 
 # Files
+ASM_FILE = sampleAsm/$(ASM_INPUT)
+CF_FILE = sampleCfFiles/$(CF_INPUT)
 COMPILER = cf
 OBJ_FILE = program.o
 EXEC = program
