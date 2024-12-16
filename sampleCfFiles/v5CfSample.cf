@@ -4,22 +4,22 @@ soit c = 15;
 
 si (a + b < c) {
     si (a - b > 0) {
-        retourner (c - a) + b;
+        rendre (c - a) + b;
     } sinon {
-        retourner b + c;
+        rendre b + c;
     }
 } sinon {
     si (a + c > b * 4) {
-        retourner (a + b) + c;
+        rendre (a + b) + c;
     } sinon {
         si (c + 1 == a + b) {
             si (b - a - 2 >= 0) {
-                retourner ((a * b) + c) / 2;
+                rendre ((a * b) + c) / 2;
             } sinon {
-                retourner (a + c) + b;
+                rendre (a + c) + b;
             }
         } sinon {
-            retourner (a + b + c) * 2 - 4;
+            rendre (a + b + c) * 2 - 4;
         }
     }
 }

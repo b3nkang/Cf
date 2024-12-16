@@ -5,4 +5,4 @@ soit y2 = 11;
 soit dx = x2 - x1;
 soit dy = y2 - y1;
 soit distanceCarre = dx * dx + dy * dy;
-retourner distanceCarre;
+rendre distanceCarre;

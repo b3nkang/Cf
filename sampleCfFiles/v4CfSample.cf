@@ -14,7 +14,7 @@ soit resultatSuperieur2 = valeur1*3 > valeur2*2;
 soit resultatInferieur1 = valeur1 < valeur2;
 soit resultatInferieur2 = valeur1*3 < valeur2*2;
 
-retourner   resultatSuperieurOuEgal1 + resultatSuperieurOuEgal2 + 
+rendre   resultatSuperieurOuEgal1 + resultatSuperieurOuEgal2 + 
             resultatInferieurOuEgal1 + resultatInferieurOuEgal2 + 
             resultatEgal1 + resultatEgal2 + resultatDifferent1 + resultatDifferent2 + 
             resultatSuperieur1 + resultatSuperieur2 + 
