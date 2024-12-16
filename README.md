@@ -12,7 +12,7 @@ Cf currently supports:
 - Expression grouping with parentheses
 - Variable declarations and assignments with `soit` (roughly semantically equivalent to `let`)
 - Control flow for if-else statements with `si` and `sinon` (semantically equivalent to `if` and `else`)
-- Return statements with `retourner` (equivalent to `return`)
+- Return statements with `rendre` (semantically equivalent to `return`)
 - Variable references in expressions
 - Scoping with `{` and `}`
 - Error handling:
@@ -26,7 +26,7 @@ Cf currently supports:
 ### Syntax
 
 - Variables are declared using the `soit` keyword
-- Return statements use the `retourner` keyword
+- Return statements use the `rendre` keyword
 - If-else statements use the `si` and `sinon` keywords
 - Statements must end with semicolons
 - Expressions follow standard operator precedence rules
@@ -43,7 +43,7 @@ Cf currently supports:
 ### Basic Arithmetic
 
 ```Cf
-retourner (((6 + 6) / 2) * 3) / 9 - 2; // returns 0
+rendre (((6 + 6) / 2) * 3) / 9 - 2; // returns 0
 ```
 
 This example demonstrates nested arithmetic expressions and operator precedence.
@@ -58,7 +58,7 @@ soit y2 = 11;
 soit dx = x2 - x1;
 soit dy = y2 - y1;
 soit distanceCarre = dx * dx + dy * dy;
-retourner distanceCarre;
+rendre distanceCarre;
 ```
 
 This example calculates the squared distance between two points.
@@ -82,7 +82,7 @@ soit resultatSuperieur2 = valeur1*3 > valeur2*2;
 soit resultatInferieur1 = valeur1 < valeur2;
 soit resultatInferieur2 = valeur1*3 < valeur2*2;
 
-retourner   resultatSuperieurOuEgal1 + resultatSuperieurOuEgal2 +
+rendre   resultatSuperieurOuEgal1 + resultatSuperieurOuEgal2 +
             resultatInferieurOuEgal1 + resultatInferieurOuEgal2 +
             resultatEgal1 + resultatEgal2 + resultatDifferent1 + resultatDifferent2 +
             resultatSuperieur1 + resultatSuperieur2 +
@@ -96,9 +96,9 @@ This example demonstrates all comparison operators.
 ```Cf
 soit x = 2;
 si (x < 3) {
-    retourner 1;
+    rendre 1;
 } sinon {
-    retourner 0;
+    rendre 0;
 }
 ```
 
@@ -113,22 +113,22 @@ soit valeur3 = 15;
 
 si (valeur1 + valeur2 < valeur3) {
     si (valeur1 - valeur2 > 0) {
-        retourner (valeur3 - valeur1) + valeur2;
+        rendre (valeur3 - valeur1) + valeur2;
     } sinon {
-        retourner valeur2 + valeur3;
+        rendre valeur2 + valeur3;
     }
 } sinon {
     si (valeur1 + valeur3 > valeur2 * 4) {
-        retourner (valeur1 + valeur2) + valeur3;
+        rendre (valeur1 + valeur2) + valeur3;
     } sinon {
         si (valeur3 + 1 == valeur1 + valeur2) {
             si (valeur2 - valeur1 - 2 >= 0) {
-                retourner ((valeur1 * valeur2) + valeur3) / 2; // expected to return 39
+                rendre ((valeur1 * valeur2) + valeur3) / 2; // expected to return 39
             } sinon {
-                retourner (valeur1 + valeur3) + valeur2;
+                rendre (valeur1 + valeur3) + valeur2;
             }
         } sinon {
-            retourner (valeur1 + valeur2 + valeur3) * 2 - 4;
+            rendre (valeur1 + valeur2 + valeur3) * 2 - 4;
         }
     }
 }
@@ -205,7 +205,7 @@ The compiler follows a traditional compilation pipeline:
 \begin{align*}
   \text{program} &\to \text{statement}* \text{ EOF} \\
 \text{statement} &\to \text{return} \;|\; \text{varDecl} \;|\; \text{ifStmt} \;|\; \text{expr} \\
-  \text{return} &\to [retourner]\text{ expr [;]} \\
+  \text{return} &\to [rendre]\text{ expr [;]} \\
   \text{varDecl} &\to [soit]\text{ identifier [=] expr [;]} \\
 \text{ifStmt} &\to [si][(]\text{expr}[)][\text{\{}]\text{statement}*[\text{\}}]([sinon][\text{\{}]\text{statement}*[\text{\}}])?\\
   \text{expr} &\to \text{arithmetic}\ ((\text{==}|\text{!=}|< |\leq |> |\geq )\text{ arithmetic})* \\
@@ -220,4 +220,4 @@ The compiler follows a traditional compilation pipeline:
 \end{align*}
 $$ -->
 
-![grammar_latex_cogs](https://latex.codecogs.com/png.image?%5Cinline%20%5Clarge%20%5Cdpi%7B150%7D%5Cbg%7Bblack%7D$$%5Cbegin%7Balign*%7D%5Ctext%7Bprogram%7D&%5Cto%5Ctext%7Bstatement%7D*%5Ctext%7BEOF%7D%5C%5C%5Ctext%7Bstatement%7D&%5Cto%5Ctext%7Breturn%7D%5C;%7C%5C;%5Ctext%7BvarDecl%7D%5C;%7C%5C;%5Ctext%7BifStmt%7D%5C;%7C%5C;%5Ctext%7Bexpr%7D%5C%5C%5Ctext%7Breturn%7D&%5Cto%5Bretourner%5D%5Ctext%7Bexpr%5B;%5D%7D%5C%5C%5Ctext%7BvarDecl%7D&%5Cto%5Bsoit%5D%5Ctext%7Bidentifier%5B=%5Dexpr%5B;%5D%7D%5C%5C%5Ctext%7BifStmt%7D&%5Cto%5Bsi%5D%5B%28%5D%5Ctext%7Bexpr%7D%5B%29%5D%5B%5Ctext%7B%5C%7B%7D%5D%5Ctext%7Bstatement%7D*%5B%5Ctext%7B%5C%7D%7D%5D%28%5Bsinon%5D%5B%5Ctext%7B%5C%7B%7D%5D%5Ctext%7Bstatement%7D*%5B%5Ctext%7B%5C%7D%7D%5D%29?%5C%5C%5Ctext%7Bexpr%7D&%5Cto%5Ctext%7Barithmetic%7D%5C%28%28%5Ctext%7B==%7D%7C%5Ctext%7B!=%7D%7C%3C%7C%5Cleq%7C%3E%7C%5Cgeq%29%5Ctext%7Barithmetic%7D%29*%5C%5C%5Ctext%7Barithmetic%7D&%5Cto%5Ctext%7Bterm%7D%5C%28%28%5B+%5D%7C%5B-%5D%29%5Ctext%7Bterm%7D%29*%5C%5C%5Ctext%7Bterm%7D&%5Cto%5Ctext%7Bfactor%7D%5C%28%28%5B*%5D%7C%5B/%5D%29%5Ctext%7Bfactor%7D%29*%5C%5C%5Ctext%7Bfactor%7D&%5Cto%5B%28%5D%5Ctext%7Bexpr%7D%5B%29%5D%5C;%7C%5C;%5Ctext%7Bprimary%7D%5C%5C%5Ctext%7Bprimary%7D&%5Cto%5Ctext%7Bnumber%7D%5C;%7C%5C;%5Ctext%7Bidentifier%7D%5C%5C%5Ctext%7Bidentifier%7D&%5Cto%5Ctext%7Bletter%7D%5C%28%28%5B%5Ctext%7Bletter%7D%5D%7C%5B%5Ctext%7Bdigit%7D%5D%29*%5C%5C%5Ctext%7Bnumber%7D&%5Cto%5Ctext%7Bdigit%7D%5C%5C%5Ctext%7Bletter%7D&%5Cto%5Ctext%7B%5Ba-zA-Z%5D%7D%5C%5C%5Ctext%7Bdigit%7D&%5Cto%5Ctext%7B%5B0-9%5D%7D%5Cend%7Balign*%7D$$)
+![grammar_latex_cogs](https://latex.codecogs.com/png.image?%5Cinline%20%5Clarge%20%5Cdpi%7B150%7D%5Cbg%7Bblack%7D$$%5Cbegin%7Balign*%7D%5Ctext%7Bprogram%7D&%5Cto%5Ctext%7Bstatement%7D*%5Ctext%7BEOF%7D%5C%5C%5Ctext%7Bstatement%7D&%5Cto%5Ctext%7Breturn%7D%5C;%7C%5C;%5Ctext%7BvarDecl%7D%5C;%7C%5C;%5Ctext%7BifStmt%7D%5C;%7C%5C;%5Ctext%7Bexpr%7D%5C%5C%5Ctext%7Breturn%7D&%5Cto%5Brendre%5D%5Ctext%7Bexpr%5B;%5D%7D%5C%5C%5Ctext%7BvarDecl%7D&%5Cto%5Bsoit%5D%5Ctext%7Bidentifier%5B=%5Dexpr%5B;%5D%7D%5C%5C%5Ctext%7BifStmt%7D&%5Cto%5Bsi%5D%5B%28%5D%5Ctext%7Bexpr%7D%5B%29%5D%5B%5Ctext%7B%5C%7B%7D%5D%5Ctext%7Bstatement%7D*%5B%5Ctext%7B%5C%7D%7D%5D%28%5Bsinon%5D%5B%5Ctext%7B%5C%7B%7D%5D%5Ctext%7Bstatement%7D*%5B%5Ctext%7B%5C%7D%7D%5D%29?%5C%5C%5Ctext%7Bexpr%7D&%5Cto%5Ctext%7Barithmetic%7D%5C%28%28%5Ctext%7B==%7D%7C%5Ctext%7B!=%7D%7C%3C%7C%5Cleq%7C%3E%7C%5Cgeq%29%5Ctext%7Barithmetic%7D%29*%5C%5C%5Ctext%7Barithmetic%7D&%5Cto%5Ctext%7Bterm%7D%5C%28%28%5B+%5D%7C%5B-%5D%29%5Ctext%7Bterm%7D%29*%5C%5C%5Ctext%7Bterm%7D&%5Cto%5Ctext%7Bfactor%7D%5C%28%28%5B*%5D%7C%5B/%5D%29%5Ctext%7Bfactor%7D%29*%5C%5C%5Ctext%7Bfactor%7D&%5Cto%5B%28%5D%5Ctext%7Bexpr%7D%5B%29%5D%5C;%7C%5C;%5Ctext%7Bprimary%7D%5C%5C%5Ctext%7Bprimary%7D&%5Cto%5Ctext%7Bnumber%7D%5C;%7C%5C;%5Ctext%7Bidentifier%7D%5C%5C%5Ctext%7Bidentifier%7D&%5Cto%5Ctext%7Bletter%7D%5C%28%28%5B%5Ctext%7Bletter%7D%5D%7C%5B%5Ctext%7Bdigit%7D%5D%29*%5C%5C%5Ctext%7Bnumber%7D&%5Cto%5Ctext%7Bdigit%7D%5C%5C%5Ctext%7Bletter%7D&%5Cto%5Ctext%7B%5Ba-zA-Z%5D%7D%5C%5C%5Ctext%7Bdigit%7D&%5Cto%5Ctext%7B%5B0-9%5D%7D%5Cend%7Balign*%7D$$)
