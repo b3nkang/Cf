@@ -31,11 +31,11 @@ HEADERS = include/fileUtils.h include/tokenize.h include/parser.h include/codeGe
 # Default target
 all: $(COMPILER)
 
-# Compile the compiler - Now depends on headers too
+# Compile the compiler
 $(COMPILER): $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 
-# Pattern rule for object files - Added header dependency
+# Pattern rule for object files
 src/%.o: src/%.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 

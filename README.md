@@ -158,10 +158,10 @@ make
 ### Compiling a Cf Program
 
 ```bash
-./cf input.cf test5.asm
+./cf yourInput.cf yourPreferredOutputFileName.asm
 ```
 
-This will generate an assembly file named `test5.asm`.
+This will generate an assembly file named `yourPreferredOutputFileName.asm`.
 
 ### Running a Complete Build Pipeline
 
