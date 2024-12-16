@@ -189,7 +189,7 @@ Token* readIdentifier(Tokenizer* tokenizer) {
     Token* retTok = (Token*)malloc(sizeof(Token));
     retTok->ln = tokenizer->currLn;
     retTok->col = tokenizer->currCol;
-    if (strcmp(wordBuf, "retourner") == 0) {
+    if (strcmp(wordBuf, "rendre") == 0) {
         retTok->type = RET_TOK;
         retTok->value = wordBuf;
         return retTok;

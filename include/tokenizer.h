@@ -7,7 +7,7 @@
 typedef enum {
     EOF_TOK,    // \0
     SEMI_TOK,   // ;
-    RET_TOK,    // retourner
+    RET_TOK,    // rendre
     VAR_TOK,    // soit
     IDENT_TOK,  // <var>
     EQ_TOK,     // =

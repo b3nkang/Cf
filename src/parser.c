@@ -138,7 +138,7 @@ static AstNode* parseStatement(Parser* parser) {
 }
 
 static AstNode* parseReturnStatement(Parser* parser) {
-    advance(parser);  // consume retourner
+    advance(parser);  // consume rendre
     
     AstNode* returnNode = malloc(sizeof(AstNode));
     returnNode->type = AST_RET;
