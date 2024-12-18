@@ -138,7 +138,7 @@ This example demonstrates a more complex control flow with nested si-sinon state
 
 ## Reference Files
 
-Within the `sampleAsm` and `sampleCfFiles` directories within the first level of the repository there are a collection of `.asm` and `.cf` files, respectively `tests1-6.asm` and `v1-6CfSample.cf` which contain both Cf code snippets and their associated compiled assembly files, so as to give you a reference of what code might be possible.
+Within the `sampleAsm` and `sampleCfFiles` directories, there are a collection of `.asm` and `.cf` files, respectively `tests1-6.asm` and `v1-6CfSample.cf` which contain both Cf code snippets and their associated compiled assembly files. These should serve as a reference for what Cf code might look like.
 
 If you wish to build and run in the Makefile with `make full` (see more immediately below), the reference files `test6.asm` and `v6CfSample.cf` will be targeted, so you may want to modify `v6CfSample.cf` with your own Cf code. Alternatively, you may also adjust the default targets in the Makefile yourself or manually compile with your own specified args, as below.
 
