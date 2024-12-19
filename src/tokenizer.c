@@ -162,7 +162,7 @@ Token* getNextToken(Tokenizer* tokenizer) {
 
 Token* readNum(Tokenizer* tokenizer) {
     size_t numStart = tokenizer->position;
-    while (isdigit(tokenizer->inputSource[tokenizer->position])) {
+    while (isdigit(tokenizer->inputSource[numStart])) {
         tokenizer->position++;
     }
     size_t numLen = tokenizer->position - numStart;
@@ -178,7 +178,7 @@ Token* readNum(Tokenizer* tokenizer) {
 
 Token* readIdentifier(Tokenizer* tokenizer) {
     size_t wordStart = tokenizer->position;
-    while(isalnum(tokenizer->inputSource[tokenizer->position])) {
+    while(isalnum(tokenizer->inputSource[wordStart])) {
         tokenizer->position++;
     }
     size_t wordEnd = tokenizer->position;
@@ -228,7 +228,7 @@ void freeToken(Token* token) {
 
 TokenArray* createTokenArray() {
     TokenArray* tokArr = malloc(sizeof(TokenArray));
-    tokArr->capacity = 16;
+    tokArr->capacity = 128;
     tokArr->count = 0;
     tokArr->tokens = malloc(sizeof(Token*) * tokArr->capacity);
     return tokArr;
